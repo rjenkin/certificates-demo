@@ -26,7 +26,7 @@ curl --resolve server-two:10000:127.0.0.1 http://server-two:10000/
 ![Diagram](./docs/diagram.png)
 
 
-## Self-signed certificates
+## 1. Self-signed certificates
 
 ### Private key
 
@@ -155,7 +155,7 @@ curl --cacert docker/ssl/selfsigned.crt --resolve server-one:10000:127.0.0.1 htt
 curl --cacert docker/ssl/selfsigned.crt -H 'Host: server-one' https://localhost:10000/ 
 ```
 
-## Certificate Authority
+## 2. Certificate Authority
 
 Using a custom Certificate Authority (CA) for local development simplifies security by requiring you to trust just one root certificate instead of multiple self-signed ones. Once your system trusts your local CA, you can easily generate and use certificates for any number of development services without additional trust configuration, creating a more realistic and streamlined secure development environment.
 
@@ -173,7 +173,8 @@ openssl req -new \
 -days 3650 \
 -key docker/ssl/ca.key \
 -out docker/ssl/ca.crt \
--config docker/ssl/ca.cnf
+-config docker/ssl/ca.cnf \
+-extensions req_ext
 ```
 
 ### Create the server certificates
@@ -205,7 +206,8 @@ openssl x509 -req \
 -CAkey docker/ssl/ca.key \
 -CAcreateserial \
 -out docker/ssl/server-one.crt \
--extensions req_ext -extfile docker/ssl/server-one.cnf
+-extensions req_ext \
+-extfile docker/ssl/server-one.cnf
 
 openssl x509 -req \
 -days 365 \
@@ -214,7 +216,8 @@ openssl x509 -req \
 -CAkey docker/ssl/ca.key \
 -CAcreateserial \
 -out docker/ssl/server-two.crt \
--extensions req_ext -extfile docker/ssl/server-two.cnf
+-extensions req_ext \
+-extfile docker/ssl/server-two.cnf
 ```
 
 ### Testing the certificates

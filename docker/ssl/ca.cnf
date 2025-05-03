@@ -12,7 +12,6 @@ OU = Your Organizational Unit
 CN = Your CA Name
 
 [req_ext]
-subjectKeyIdentifier = hash
-authorityKeyIdentifier = keyid:always,issuer:always
 basicConstraints = critical, CA:true
 keyUsage = critical, digitalSignature, cRLSign, keyCertSign
+subjectKeyIdentifier = hash
