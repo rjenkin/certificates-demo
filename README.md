@@ -155,3 +155,82 @@ curl --cacert docker/ssl/selfsigned.crt --resolve server-one:10000:127.0.0.1 htt
 curl --cacert docker/ssl/selfsigned.crt -H 'Host: server-one' https://localhost:10000/ 
 ```
 
+## Certificate Authority
+
+Using a custom Certificate Authority (CA) for local development simplifies security by requiring you to trust just one root certificate instead of multiple self-signed ones. Once your system trusts your local CA, you can easily generate and use certificates for any number of development services without additional trust configuration, creating a more realistic and streamlined secure development environment.
+
+### Create the certificate authority
+
+**Create the private key:**
+```bash
+openssl genrsa -out docker/ssl/ca.key 4096
+```
+
+**Create the certificate:**
+```bash
+openssl req -new \
+-x509 \
+-days 3650 \
+-key docker/ssl/ca.key \
+-out docker/ssl/ca.crt \
+-config docker/ssl/ca.cnf
+```
+
+### Create the server certificates
+
+**Create a private key:**
+```bash
+openssl genrsa -out docker/ssl/servers.key 2048
+```
+
+**Create the Certificate Signing Request:**
+```bash
+openssl req -new \
+-key docker/ssl/servers.key \
+-out docker/ssl/server-one.csr \
+-config docker/ssl/server-one.cnf
+
+openssl req -new \
+-key docker/ssl/servers.key \
+-out docker/ssl/server-two.csr \
+-config docker/ssl/server-two.cnf
+```
+
+**Create the certificates with the Certificate Authority:**
+```bash
+openssl x509 -req \
+-days 365 \
+-in docker/ssl/server-one.csr \
+-CA docker/ssl/ca.crt \
+-CAkey docker/ssl/ca.key \
+-CAcreateserial \
+-out docker/ssl/server-one.crt \
+-extensions req_ext -extfile docker/ssl/server-one.cnf
+
+openssl x509 -req \
+-days 365 \
+-in docker/ssl/server-two.csr \
+-CA docker/ssl/ca.crt \
+-CAkey docker/ssl/ca.key \
+-CAcreateserial \
+-out docker/ssl/server-two.crt \
+-extensions req_ext -extfile docker/ssl/server-two.cnf
+```
+
+### Testing the certificates
+
+**Enable SSL in nginx:**
+
+Update both servers in [nginx config](./docker/nginx.conf) to use certificates `server-one.crt` and `server-two.crt` and restart the container:
+
+**Make a HTTPs request to the server using the CA certificate:**
+```bash
+curl --cacert docker/ssl/ca.crt --resolve server-one:10000:127.0.0.1 https://server-one:10000
+
+curl --cacert docker/ssl/ca.crt --resolve server-two:10000:127.0.0.1 https://server-two:10000
+
+curl --cacert docker/ssl/ca.crt -H 'Host: server-one' https://localhost:10000/ 
+
+curl --cacert docker/ssl/ca.crt -H 'Host: server-two' https://localhost:10000/ 
+```
+
