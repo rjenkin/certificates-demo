@@ -1,2 +1,7 @@
 # Draw.IO backup files
 docs/*.bkp
+
+docker/ssl/*.key
+docker/ssl/*.srl
+docker/ssl/*.crt
+docker/ssl/*.csr

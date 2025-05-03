@@ -1,0 +1,20 @@
+name: certificates-demo
+
+services:
+  
+  server-one:
+    image: nginx:alpine
+    container_name: server-one
+    ports:
+      - "10000:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/ssl:/etc/nginx/ssl:ro
+      - ./docker/nginx/:/usr/share/nginx/
+    networks:
+      - host-network
+    restart: unless-stopped
+
+networks:
+  host-network:
+    driver: bridge
