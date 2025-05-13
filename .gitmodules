@@ -1,0 +1,8 @@
+[submodule "submodules/trillian"]
+	path = submodules/trillian
+	url = https://github.com/google/trillian.git
+	branch = master
+[submodule "submodules/certificate-transparency-go"]
+	path = submodules/certificate-transparency-go
+	url = https://github.com/google/certificate-transparency-go.git
+	branch = master
