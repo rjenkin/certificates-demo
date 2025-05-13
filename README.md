@@ -8,7 +8,7 @@
 docker-compose up -d
 ```
 
-**Test docker:**
+**Test docker (HTTP):**
 ```bash
 curl http://localhost:10000/
 
@@ -98,7 +98,7 @@ server {
 curl --resolve server-one:10000:127.0.0.1 https://server-one:10000/
 ```
 
-This should return an untrusted certificate error
+*This should return an untrusted certificate error*
 
 **Ignore error (not recommended):**
 ```bash
@@ -113,6 +113,8 @@ curl --cacert docker/ssl/selfsigned.crt --resolve server-one:10000:127.0.0.1 htt
 **Request on different domain name:**
 ```bash
 curl --cacert docker/ssl/selfsigned.crt https://localhost:10000/
+
+curl --cacert docker/ssl/selfsigned.crt --resolve server-two:10000:127.0.0.1 https://server-two:10000/
 ```
 
 ### Subject Name Alternatives
@@ -154,6 +156,7 @@ curl --cacert docker/ssl/selfsigned.crt --resolve server-one:10000:127.0.0.1 htt
 
 curl --cacert docker/ssl/selfsigned.crt -H 'Host: server-one' https://localhost:10000/ 
 ```
+
 
 ## 2. Certificate Authority
 
@@ -235,5 +238,11 @@ curl --cacert docker/ssl/ca.crt --resolve server-two:10000:127.0.0.1 https://ser
 curl --cacert docker/ssl/ca.crt -H 'Host: server-one' https://localhost:10000/ 
 
 curl --cacert docker/ssl/ca.crt -H 'Host: server-two' https://localhost:10000/ 
+```
+
+### Verify the Certificate authority
+
+```bash
+openssl verify -CAfile docker/ssl/ca.crt docker/ssl/server-one.crt 
 ```
 

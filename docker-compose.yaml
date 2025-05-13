@@ -2,9 +2,9 @@ name: certificates-demo
 
 services:
   
-  server-one:
+  nginx:
     image: nginx:alpine
-    container_name: server-one
+    container_name: nginx
     ports:
       - "10000:80"
     volumes:
