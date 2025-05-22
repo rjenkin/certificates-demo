@@ -16,6 +16,7 @@ subjectAltName = @alt_names
 
 [alt_names]
 DNS.1 = server-one
-DNS.2 = localhost
+#DNS.2 = server-two
+#DNS.3 = localhost
 IP.1 = 127.0.0.1
 IP.2 = ::1

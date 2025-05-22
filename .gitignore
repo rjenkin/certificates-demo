@@ -1,7 +1,14 @@
 # Draw.IO backup files
 docs/*.bkp
 
+# CTFE config
+docker/ctfe_config
+
+# SSL files for docker
 docker/ssl/*.key
 docker/ssl/*.srl
 docker/ssl/*.crt
 docker/ssl/*.csr
+
+# Old files
+old
