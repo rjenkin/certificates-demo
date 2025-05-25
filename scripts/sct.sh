@@ -35,7 +35,7 @@ EOF
 # Create CSR
 echo "Creating CSR for precertificate..."
 openssl req -new \
-  -key ../docker/ssl/server.key \
+  -key ../docker/ssl/servers.key \
   -config precert.cnf \
   -out server.csr
 
@@ -78,6 +78,7 @@ SCT_RESPONSE=$(curl --silent -X POST \
   http://localhost:8080/testlog/ct/v1/add-pre-chain)
 
 echo "SCT Response from CT Log Server:"
+echo "$SCT_RESPONSE"
 echo "$SCT_RESPONSE" | jq .
 
 # Save response..
@@ -89,7 +90,7 @@ SCT_BASE64=$(echo "$SCT_RESPONSE" | jq -r '.signature')
 # Config to final certificate.
 # echo "$SCT_BASE64" | base64 -d > sct.bin
 
-DATA=$(pipenv run python sct_encode.py)
+DATA=$(pipenv run python sct_encode.py --scts sct_response_latest.json)
 echo "Adding data: $DATA"
 
 
@@ -133,7 +134,7 @@ EOF
 
 echo "Creating final CSR..."
 openssl req -new \
-  -key ../docker/ssl/server.key \
+  -key ../docker/ssl/servers.key \
   -config final_cert.cnf \
   -out final.csr
 
@@ -198,4 +199,4 @@ echo $ADD_CHAIN_RESPONSE | jq .
 # rm final.csr
 # rm final.crt
 
-# openssl x509 -in final.crt -text -noout
+openssl x509 -in final.crt -text -noout

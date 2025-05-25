@@ -1,7 +1,9 @@
 #
 # This script thats SCT data from a certificate in ASN.1 format with an octet string and outputs as JSON
 #
-# pipenv run python sct_decode.py 
+import sys
+import os
+import argparse
 import struct
 import json
 import asn1tools
@@ -27,9 +29,7 @@ class SCTEncoder(json.JSONEncoder):
 
 def extract_sct_list(data):
     # Compile the ASN.1 specification
-    spec = asn1tools.compile_files('sct_schema.asn')
-
-    # Try decoding it back
+    spec = asn1tools.compile_files('schema.asn')
     decoded = spec.decode('CTEmbeddedSCTList', data)
 
     # Total length of all scts: 361
@@ -102,37 +102,20 @@ def extract_sct_data(sct):
         "signature": signature
     }
 
-def main():
-    with open("sct_raw.bin", "rb") as f:
+def decode_binary_sct(filename):
+    with open(filename, "rb") as f:
         data = f.read()
-
-        sct_list = extract_sct_list(data)
-
-        # print(json.dumps(sct_list, cls=SCTEncoder, indent=2))
-
-        with open('sct_list.json', 'w') as f:
-            json.dump(sct_list, f, cls=SCTEncoder, indent=2)
-
-
-        # Debug: `jq -r '.[0].signature' sct_list.json | base64 -d | xxd -c 1`
-
-        # % xxd -c 1 -g 1 sct_raw.bin > sct_debug.txt
-
-        # # This is what is included in the CSR
-        # 00000004: 01  . # 0x169 = 361
-        # 00000005: 69  i
-
-        # 00000006: 00  . # Length: 
-        # 00000007: 76  v # Length: 7d - 8 = 75
-        # 00000008: 00  . # Version?
-        # 00000009: e6  . # Start of Log ID 1
-        # 0000000a: d2  .
-        # 0000000b: 31  1
-        # 0000000c: 63  c
-        # 0000000d: 40  @
-        # 0000000e: 77  w
-        # 0000000f: 8c  .
-
+        return extract_sct_list(data)
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description='Process an SCT binary file.')
+    parser.add_argument('--sct', help='Path to the SCT binary file')
+    args = parser.parse_args()
+
+    if not os.path.isfile(args.sct):
+        print(f"Error: SCT file '{args.sct}' does not exist", file=sys.stderr)
+        sys.exit(1)
+
+    sct_list = decode_binary_sct(args.sct)
+
+    print(json.dumps(sct_list, cls=SCTEncoder, indent=2))

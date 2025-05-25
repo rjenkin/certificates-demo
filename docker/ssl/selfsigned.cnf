@@ -3,9 +3,4 @@ prompt = no
 distinguished_name = dn
 
 [dn]
-C = AU
-ST = YourState
-L = YourCity
-O = YourOrganization
-OU = YourDepartment
 CN = server-one

@@ -4,11 +4,6 @@ distinguished_name = dn
 req_extensions = req_ext
 
 [dn]
-C = AU
-ST = YourState
-L = YourCity
-O = YourOrganization
-OU = YourDepartment
 CN = server-two
 
 [req_ext]

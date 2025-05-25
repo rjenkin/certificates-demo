@@ -1,0 +1,21 @@
+{
+  "name": "ct-validation",
+  "version": "1.0.0",
+  "description": "Certificate Transparency validation library",
+  "scripts": {
+    "ct-verify": "node -r ts-node/register ./src/verify.ts"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^9.27.0",
+    "globals": "^16.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.32.1"
+  },
+  "dependencies": {
+    "@peculiar/asn1-cert-transparency": "^2.3.13",
+    "@peculiar/asn1-schema": "^2.3.13",
+    "@peculiar/asn1-x509": "^2.3.13"
+  }
+}

@@ -1,9 +1,10 @@
 #
-# This script takes a sct response and encodes it into a value that can be inserted into a CSR
-#
-# Single vs multiple?
+# This script takes a SCT in JSON format and encodes it into a value that can be inserted into a certificate
 #
 import sys
+import math
+import os
+import argparse
 import json
 import base64
 import struct
@@ -39,18 +40,9 @@ def encode_sct(sct):
     return serialized_sct
 
 
-def main():
-    # Single SCT
-    # with open("sct_response.json", "r") as f:
-    #     sct_input = json.load(f)
-
-    # SCT List
-    # with open("sct_list.json", "r") as f:
-    #     sct_input = json.load(f)
-
-    with open("sct_response_latest.json", "r") as f:
+def encode_binary_sct(filename_json, filename_binary):
+    with open(filename_json, "r") as f:
         sct_input = json.load(f)
-
 
     # Accept a list of SCTs or a single SCT
     if isinstance(sct_input, dict):
@@ -75,41 +67,34 @@ def main():
     # Prefix total size into serialized_scts
     serialized_scts = struct.pack(">H", total_size) + serialized_scts
 
-    with open("test.bin", "wb") as f:
-        f.write(serialized_scts)
+    # Add ASN.1 headers
+    headers = b'\x04' # OCTET STRING tag
+    if len(serialized_scts) < 128:
+        headers += struct.pack("B", len(serialized_scts))
+    else:
+        length = len(serialized_scts)
+        byte_length = math.ceil(length.bit_length() / 8)
+        byte = 0x80 | byte_length
+        headers += struct.pack("B", byte)
+        headers += struct.pack(">H", length)
+
+    with open(filename_binary, "wb") as f:
+        f.write(headers + serialized_scts)
 
     # Output the line for use in openssl.cnf
-    print(f'1.3.6.1.4.1.11129.2.4.2 = critical,ASN1:FORMAT:HEX,OCTETSTRING:{serialized_scts.hex()}')
+    return f'1.3.6.1.4.1.11129.2.4.2 = critical,ASN1:FORMAT:HEX,OCTETSTRING:{serialized_scts.hex()}'
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description='Process SCT JSON to binary.')
+    parser.add_argument('--scts', help='Path to the JSON file containing SCTs')
+    parser.add_argument('--binary-output', help='Filename to save the binary SCT output', default='sct_output.bin')
+    args = parser.parse_args()
 
-# 1.3.6.1.4.1.11129.2.4.5
-# CT Certificate SCTs: 
-#     Signed Certificate Timestamp:
-#         Version   : v1 (0x0)
-#         Log ID    : 8F:3B:1F:EF:8C:43:FE:21:45:30:4B:22:F4:62:B4:C4:
-#                     A3:3C:0C:84:4B:69:65:E6:B7:41:5B:F2:1A:3D:27:0D
-#         Timestamp : May 14 23:47:46.681 2025 GMT
-#         Extensions: none
-#         Signature : ecdsa-with-SHA256
-#                     30:45:02:21:00:B3:66:54:C2:A5:AB:39:81:F1:4E:CC:
-#                     48:06:78:1C:51:81:1C:8B:85:AD:FF:1E:D7:27:F4:38:
-#                     82:F2:F8:52:12:02:20:72:09:CA:21:82:7F:AD:44:E5:
-#                     62:07:BE:5F:9B:93:BD:3A:F7:92:73:80:AA:92:E7:BF:
-#                     A1:AD:6C:A6:EA:20:42
+    if not os.path.isfile(args.scts):
+        print(f"Error: SCT JSON file '{args.scts}' does not exist", file=sys.stderr)
+        sys.exit(1)
 
-# 1.3.6.1.4.1.11129.2.4.2
-# CT Precertificate SCTs: 
-#     Signed Certificate Timestamp:
-#         Version   : v1 (0x0)
-#         Log ID    : 8F:3B:1F:EF:8C:43:FE:21:45:30:4B:22:F4:62:B4:C4:
-#                     A3:3C:0C:84:4B:69:65:E6:B7:41:5B:F2:1A:3D:27:0D
-#         Timestamp : May 14 23:47:46.681 2025 GMT
-#         Extensions: none
-#         Signature : ecdsa-with-SHA256
-#                     30:45:02:21:00:B3:66:54:C2:A5:AB:39:81:F1:4E:CC:
-#                     48:06:78:1C:51:81:1C:8B:85:AD:FF:1E:D7:27:F4:38:
-#                     82:F2:F8:52:12:02:20:72:09:CA:21:82:7F:AD:44:E5:
-#                     62:07:BE:5F:9B:93:BD:3A:F7:92:73:80:AA:92:E7:BF:
-#                     A1:AD:6C:A6:EA:20:42
+    config_value = encode_binary_sct(args.scts, args.binary_output)
+
+    print("# The following value can be used in the certificate config:")
+    print(config_value)
