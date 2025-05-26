@@ -62,7 +62,7 @@ import { validateProof } from "./ct_proof_validation";
         const log = ctLogStore.getLogById(b64LogId);
         if (log === undefined) {
           console.warn(`CT Log ${b64LogId} not found`);
-          return;
+          continue;
         }
 
         const leafHash = await leafHashForPreCert(
