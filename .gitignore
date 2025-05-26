@@ -32,12 +32,15 @@ bundle.pem
 cert1.pem
 cert1.purpose.pem
 cert1.purpose.txt
+cert1.txt
 cert2.pem
 cert2.purpose.pem
 cert2.purpose.txt
+cert2.txt
 cert3.pem
 cert3.purpose.pem
 cert3.purpose.txt
+cert3.txt
 
 three-tier-certificates/*.crt
 three-tier-certificates/*.csr
@@ -45,3 +48,10 @@ three-tier-certificates/*.key
 
 sct_raw.bin
 sct_raw.txt
+
+scripts/*.cnf
+scripts/*.crt
+scripts/*.csr
+scripts/*.json
+scripts/*.bin
+scripts/*.txt
