@@ -1,0 +1,11 @@
+-- https://github.com/eerimoq/asn1tools/tree/master
+
+MyModule DEFINITIONS ::= BEGIN
+
+    -- Certificate Transparency ASN.1 Schema
+    -- Based on RFC 6962
+
+    -- The embedding used in X.509 certificates
+    CTEmbeddedSCTList ::= OCTET STRING
+
+END
