@@ -13,13 +13,13 @@ The precertificate and final certificate are almost identical except for these e
 A certificate can be submitted to multiple logs.
 
 
-## Certificate transparency validation
+## Certificate transparency verification
 
 Using certificates downloaded during the "Real world certificates" exercise, we'll verify the embedded Signed Certificate Timestamps (SCTs) against public Certificate Transparency logs. This verification process demonstrates how browsers and other systems can cryptographically validate that certificates were properly logged before being trusted.
 
 > Note: this step required NodeJS installed
 
-In the `ct-validation` directory, run:
+In the `ct-verify` directory, run:
 - `npm install`
 - `npm run ct-verify ../cert1.pem ../cert2.pem`
 
@@ -439,7 +439,7 @@ openssl x509 -in final.crt -noout -text
 
 To verify that your certificate contains valid SCTs from your local CT log server, you'll need to modify the ct-verify script first. The script normally uses Google's public log list to identify known CT logs, but your local server won't be in that list.
 
-Open the [verify.ts](../ct-validation//src/verify.ts) file in the `ct-validation` directory and locate the `ctLogStore.addLog` call. Add a new entry for your local log server by inserting code that includes your server's log ID (which you can extract from your certificate's SCT) and the public key (found in the ct_server.cfg file).
+Open the [verify.ts](../ct-verify/src/verify.ts) file in the `ct-verify` directory and locate the `ctLogStore.addLog` call. Add a new entry for your local log server by inserting code that includes your server's log ID (which you can extract from your certificate's SCT) and the public key (found in the ct_server.cfg file).
 
 Once the script is updated, run the verification with:
 ```bash

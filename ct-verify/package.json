@@ -1,7 +1,7 @@
 {
-  "name": "ct-validation",
+  "name": "ct-verify",
   "version": "1.0.0",
-  "description": "Certificate Transparency validation library",
+  "description": "Certificate Transparency verification library",
   "scripts": {
     "ct-verify": "node -r ts-node/register ./src/verify.ts"
   },
