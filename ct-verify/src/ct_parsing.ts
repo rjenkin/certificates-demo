@@ -69,7 +69,7 @@ export async function leafHashForPreCert(
   const version = 0;
   const leafType = 0;
   const entryType = 1;
-  const timestamp = BigInt(sct_time.getTime()); // microseconds
+  const timestamp = BigInt(sct_time.getTime());
 
   // Structure of the MerkleTreeLeaf:
   // - Version: 1 byte
