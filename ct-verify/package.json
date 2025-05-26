@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Certificate Transparency verification library",
   "scripts": {
-    "ct-verify": "node -r ts-node/register ./src/verify.ts"
+    "ct-verify": "node -r ts-node/register ./src/verify.ts",
+    "lint": "eslint ./src"
   },
   "license": "MIT",
   "devDependencies": {

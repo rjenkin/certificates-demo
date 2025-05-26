@@ -39,7 +39,7 @@ export interface CtLogOperator {
   name: string;
   email: string[];
   logs: CtLog[];
-  tiled_logs: any[]; // unknown
+  tiled_logs: unknown[];
 }
 
 export interface CtLogList {
