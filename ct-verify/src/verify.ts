@@ -54,6 +54,10 @@ import { validateProof } from "./ct_proof_validation";
 
       const scts = sctsFromCertDer(certificate);
       console.log(`Found ${scts.length} SCTs in certificate`);
+      if (scts.length === 0) {
+        console.warn(`No Signed Certificate Timestamps found in certificate ${certFilename}`);
+        return;
+      }
 
       for (const sct of scts) {
         const b64LogId = b64EncodeBytes(new Uint8Array(sct.logId));

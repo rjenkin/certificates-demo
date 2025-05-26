@@ -25,7 +25,7 @@ export function sctsFromCertDer(
       ?.extnValue ?? new OctetString();
 
   if (sctExtensionBytes.byteLength === 0) {
-    throw new Error("No SCT extension found");
+    return [];
   }
 
   return AsnParser.parse(sctExtensionBytes, CertificateTransparency).items;

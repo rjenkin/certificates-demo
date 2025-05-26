@@ -58,7 +58,7 @@ export const base64EncodeLogId = (logIdHex: string): string => {
     return b64EncodeBytes(bytes);
 }
 
-export const base64EncodePublicKey = (publicKeyHex: string): string => {
-  const bytes = new Uint8Array(publicKeyHex.split('').map(byte => byte.charCodeAt(0)));
+export const base64EncodePublicKey = (publicKeyDer: string): string => {
+  const bytes = new Uint8Array(publicKeyDer.split('').map(byte => byte.charCodeAt(0)));
   return b64EncodeBytes(bytes);
 }
