@@ -20,20 +20,11 @@ Features
 
 Perfect for developers, security professionals, and system administrators looking to build practical knowledge of PKI concepts and SSL/TLS certificate management beyond theoretical understanding.
 
+
 ## Requirements
 
 These exercises require Docker, OpenSSL, Go, and JQ to be installed.
 
-
-```bash
-brew install openssl
-brew install cmake
-xcode-select --install
-
-export OPENSSL_ROOT_DIR=$(brew --prefix openssl@3)
-export CFLAGS="-I$OPENSSL_ROOT_DIR/include"
-export LDFLAGS="-L$OPENSSL_ROOT_DIR/lib"
-```
 
 ## Exercises
 
