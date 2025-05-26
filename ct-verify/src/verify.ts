@@ -12,7 +12,7 @@ import { validateProof } from "./ct_proof_validation";
 
 (async() => {
     if (process.argv.length < 4) {
-        console.error("Usage: node validate.js <cert.pem> <issuer.pem>");
+        console.error("Usage: npm run ct-verify <cert.pem> <issuer.pem>");
         process.exit(1);
     }
 
