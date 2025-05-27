@@ -1,5 +1,32 @@
 # Other tools
 
+## Google's Certificate Transparency Go tools
+
+The [Certificate Transparency: Go Code](https://github.com/google/certificate-transparency-go) holds Go code related to Certificate Transparency (CT).
+
+```bash
+# Scans your project and updates the go.mod file and downloads all dependencies mentioned in the go.mod file
+go mod tidy
+
+# Install the ct client
+go install ./client/ctclient
+
+# Adds GOPATH to PATHs
+export PATH=$PATH:$(go env GOPATH)/bin
+
+# Usage
+ctclient --help
+
+# Get signed tree head
+ctclient get-sth --log_uri=http://localhost:8080/logs
+
+# Get entries
+ctclient get-entries --first 1 --last 1 --log_uri=http://localhost:8080/logs
+
+# Get roots
+ctclient get-roots --log_uri=http://localhost:8080/logs
+```
+
 ## Certigo
 
 Certigo is a utility to examine and validate certificates to help with debugging SSL/TLS issues.
@@ -32,7 +59,7 @@ ZLint is a X.509 certificate linter written in Go that checks for consistency wi
 
 Usage:
 ```bash
-$ zlint cert1.pem | jq .
+$ zlint ssl/chain-of-trust/cert1.pem | jq .
 {
   "e_aia_ca_issuers_must_have_http_only": {
     "result": "pass"
@@ -67,7 +94,7 @@ $ zlint cert1.pem | jq .
 
 Check certificate transparency details:
 ```bash
-zlint ../../cert1.pem | jq '{e_empty_sct_list: .e_empty_sct_list,e_scts_missing: .e_scts_missing,e_embedded_sct_not_enough_for_issuance: .e_embedded_sct_not_enough_for_issuance, e_precert_with_sct_list: .e_precert_with_sct_list,w_ct_sct_policy_count_unsatisfied: .w_ct_sct_policy_count_unsatisfied}'
+zlint ssl/chain-of-trust/cert1.pem | jq '{e_empty_sct_list: .e_empty_sct_list,e_scts_missing: .e_scts_missing,e_embedded_sct_not_enough_for_issuance: .e_embedded_sct_not_enough_for_issuance, e_precert_with_sct_list: .e_precert_with_sct_list,w_ct_sct_policy_count_unsatisfied: .w_ct_sct_policy_count_unsatisfied}'
 ```
 
 
