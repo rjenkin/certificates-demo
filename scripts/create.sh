@@ -1,9 +1,9 @@
 #!/bin/bash
-# This script generates a three-tier certificate structure
+# This script generates a chain of trust certificate structure
 
-# Work out of the three tier certificates directory
+# Work out of the chain of trust directory
 cd $(dirname "$0")
-cd ../three-tier-certificates
+cd ../ssl/chain-of-trust
 
 #
 # Root CA
@@ -21,7 +21,7 @@ openssl req -new -x509 \
 -not_before 20090707172554Z \
 -not_after 20301207175554Z \
 -key ca.key \
--out ca.crt \
+-out ca.pem \
 -config ca.cnf \
 -extensions req_ext \
 -set_serial '0x4a538c28'
@@ -31,7 +31,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-openssl x509 -in ca.crt -text -noout > ../cert3.txt
+openssl x509 -in ca.pem -text -noout > ca.pem.txt
 
 
 #
@@ -57,9 +57,9 @@ openssl x509 -req \
 -not_before 20141215152503Z \
 -not_after 20301015155503Z \
 -in intermediate.csr \
--CA ca.crt \
+-CA ca.pem \
 -CAkey ca.key \
--out intermediate.crt \
+-out intermediate.pem \
 -extensions req_ext \
 -extfile intermediate.cnf \
 -set_serial '0x61a1e7d20000000051d366a6'
@@ -70,7 +70,7 @@ if [ $? -ne 0 ]; then
 fi
 
 
-openssl x509 -in intermediate.crt -text -noout > ../cert2.txt
+openssl x509 -in intermediate.pem -text -noout > intermediate.pem.txt
 
 
 
@@ -97,9 +97,9 @@ openssl x509 -req \
 -not_before 20240603073302Z \
 -not_after 20250603073301Z \
 -in server.csr \
--CA intermediate.crt \
+-CA intermediate.pem \
 -CAkey intermediate.key \
--out server.crt \
+-out server.pem \
 -extensions req_ext2 \
 -extfile server.cnf \
 -set_serial '0x79d816d9c1f85c2c343bd655aee3e978'
@@ -110,5 +110,5 @@ if [ $? -ne 0 ]; then
 fi
 
 
-openssl x509 -in server.crt -text -noout > ../cert1.txt
+openssl x509 -in server.pem -text -noout > server.pem.txt
 

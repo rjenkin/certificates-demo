@@ -1,5 +1,7 @@
 # Certificate Transparency Logs
 
+> **Preparation Note:** Setting up the local CT log server later in this exercise requires downloading git submodules and Docker images, which can take some time. To save time later, you can run the setup commands in the `Start local log server` section now while you continue with the current exercises.
+
 Certificate Transparency logs help protect end users by making it possible to detect and fix fraudulent or mistakenly issued website security certificates, reducing the risk of impersonation or malicious websites.
 
 When a certificate is issued by a Certificate Authority, it can be submitted to public, append-only CT logs maintained by independent operators. These logs create cryptographically verifiable records of all certificates, allowing website owners, browsers, and security researchers to monitor and audit certificate issuance. Each logged certificate receives a Signed Certificate Timestamp (SCT) as proof of inclusion, which can be embedded in the certificate itself.
@@ -17,13 +19,17 @@ A certificate can be submitted to multiple logs.
 
 Using certificates downloaded during the "Real world certificates" exercise, we'll verify the embedded Signed Certificate Timestamps (SCTs) against public Certificate Transparency logs. This verification process demonstrates how browsers and other systems can cryptographically validate that certificates were properly logged before being trusted.
 
-> Note: this step required NodeJS installed
+Go to the `ct-verify` directory and install the required dependencies by running:
+```bash
+npm install
+```
 
-In the `ct-verify` directory, run:
-- `npm install`
-- `npm run ct-verify ../cert1.pem ../cert2.pem`
+After installation completes, run the verification script by providing both the certificate and its issuer certificate as arguments:
+```bash
+npm run ct-verify ../ssl/chain-of-trust/cert1.pem ../ssl/chain-of-trust/cert2.pem
+```
 
-The script should output the results of certificate transparency verification.
+The script will examine the certificate for embedded Signed Certificate Timestamps (SCTs), identify which Certificate Transparency logs issued them, verify their cryptographic signatures, and report the results. This verification demonstrates the same process that browsers use to ensure certificates have been properly logged before being trusted for secure connections.
 
 
 ## How verification works
@@ -52,7 +58,7 @@ To locate which Certificate Transparency log issued a particular SCT, you need t
 First, examine the certificate to find the Log ID embedded in its SCTs:
 
 ```bash
-openssl x509 -in cert1.pem -noout -text
+openssl x509 -in ssl/chain-of-trust/cert1.pem -noout -text
 ```
 
 In the output, look for the "CT Precertificate SCTs" section:
@@ -122,6 +128,11 @@ curl --silent https://nessie2025.ct.digicert.com/log/ct/v1/get-sth | jq .
 
 
 ### Get entries
+
+This endpoint returns an entry using it's index in the log.
+
+> Note: this endpoint might not be exposed on all CT Log servers
+
 ```bash
 curl --silent "https://nessie2025.ct.digicert.com/log/ct/v1/get-entries?start=0&end=0" | jq .
 {
@@ -200,7 +211,7 @@ The returned `leaf_index` identifies the certificate's position in the log, whil
 The `get-entry-and-proof` endpoint retrieves both a specific log entry and its associated cryptographic proof, enabling verification that the entry is included in the Merkle Tree at the specified position without downloading the entire log.
 
 ```bash
-curl --silent "http://localhost:8080/testlog/ct/v1/get-entry-and-proof?leaf_index=0&tree_size=9" | jq .
+curl --silent "http://localhost:8080/logs/ct/v1/get-entry-and-proof?leaf_index=0&tree_size=9" | jq .
 {
   "leaf_input": "...Base 64 encoded MerkleTreeLeaf...",
   "extra_data": "...",
@@ -274,7 +285,7 @@ The SCT extension in certificates follows a specific binary structure defined in
 
 Find the offset for the SCT extension data:
 ```bash
-openssl asn1parse -in cert1.pem
+openssl asn1parse -in ssl/chain-of-trust/cert1.pem | grep -A 1 'CT Precertificate SCTs'
 ```
 
 Look for the CT Precertificate SCTs extension:
@@ -285,7 +296,7 @@ Look for the CT Precertificate SCTs extension:
 
 Extract the extension value at offset for the octet string:
 ```bash
-openssl asn1parse -in cert1.pem -strparse "1177"
+openssl asn1parse -in ssl/chain-of-trust/cert1.pem -strparse "1177"
 
 0:d=0  hl=4 l= 363 prim: OCTET STRING      [HEX DUMP]:0169007600E6D2...AD
 ```
@@ -319,31 +330,34 @@ The SCT extension uses a nested structure:
 Understanding the precise binary structure of SCTs is essential for properly encoding them from your own log server. In this exercise, extract the SCT as binary and output to a text file. Annotate the text file with the meaning of each byte.
 
 ```bash
-openssl asn1parse -in cert1.pem -strparse "..offset.." -out sct_raw.bin -noout
+openssl asn1parse -in ssl/chain-of-trust/cert1.pem -strparse "..offset.." -out sct-encoding/data/cert1_scts.bin -noout
 
-xxd -c 1 --decimal sct_raw.bin > sct_raw.txt
+xxd -c 1 --decimal sct-encoding/data/cert1_scts.bin > sct-encoding/data/cert1_scts.bin.txt
 ```
 
 ### Exercise: script to extract SCT data to JSON
 
-Update the sct_decode script to output the sct_raw.bin as JSON. Unit tests have been setup to ensure the code is output to the expected format.
+Update the `sct_decode.py` script to output the `cert1_scts.bin` as JSON. Unit tests have been setup to ensure the code is output to the expected format.
 
 When the script is working, output the response to a JSON file:
 ```bash
-pipenv run python sct_decode.py --sct ../sct_raw.bin > scts.json
+pipenv run decode --sct data/cert1_scts.bin > data/cert1_scts.json
 ```
 
 ### Exercise: script to encode SCT data into a certificate
 
-Update the sct_encode script to convert the JSON back to binary. By comparing the output with the original `sct_raw.bin` we can verify that the script is working correctly, and use this for embedding our own SCTs into our certificates.
+Update the `sct-encoding/src/sct_encode.py` script to convert the JSON back to binary. By comparing the output with the original `cert1_scts.bin` we can verify that the script is working correctly, and use this for embedding our own SCTs into our certificates.
 
 ```bash
-xxd -c 1 --decimal sct_output.bin > sct_output.txt
-
-diff --color=always --side-by-side ../sct_raw.txt sct_output.txt
-git diff --no-index --word-diff ../sct_raw.txt sct_output.txt
+pipenv run encode --scts data/cert1_scts.json --binary-output data/cert1_scts_recoded.bin
 ```
 
+```bash
+xxd -c 1 --decimal data/cert1_scts_recoded.bin > data/cert1_scts_recoded.bin.txt
+
+diff --color=always --side-by-side data/cert1_scts.bin.txt data/cert1_scts_recoded.bin.txt
+git diff --no-index --word-diff data/cert1_scts.bin.txt data/cert1_scts_recoded.bin.txt
+```
 
 ## Running a local CT Log server
 
@@ -362,35 +376,29 @@ This practical experience with a local log server is purely educational - produc
 Google's [Certificate Transparency Go](https://github.com/google/certificate-transparency-go) project provides a reference implementation of a CT log server that can be run locally for testing and educational purposes. This implementation functions as a "CT personality" layer on top of [Trillian](https://github.com/google/trillian), which serves as the underlying Merkle tree database.
 
 To run the local CT log server:
-1. Ensure both repositories are available in the submodules directory:
- - `certificate-transparency-go`
- - `trillian`
-2. Start the log server using the provided script:
-```bash
-./scripts/ctfe.sh
-```
+1. Initialise the Git submodules with command: `git submodule update --init --recursive`. Then ensure both repositories are available in the submodules directory:
+ - `submodules/certificate-transparency-go`
+ - `submodules/trillian`
+2. Start the log server:
+ - If you're behind a proxy, you may need to set the GOPROXY environment variable
+ - Run the CTFE script: `./scripts/ctfe.sh`
+
 
 The script should create directory `docker/ctfe_config`. In that directory there is a configuration file `ct_server.cfg` and a root certificate called `fake-ca.cert`. To add your own certificates to the log, copy your root CA into the config directory and update the `roots_pem_file` parameter in `ct_server.cfg`. A restart of the `ctfe-1` container is required for the changes to take affect.
 
 **Test server:**
 
-The base URL of the local CT server should be `http://localhost:8080/testlog`. Test that it's running by calling an endpoint:
+The base URL of the local CT server should be `http://localhost:8080/logs`. Test that it's running by calling an endpoint:
 ```bash
-curl http://localhost:8080/testlog/ct/v1/get-roots
-```
+curl http://localhost:8080/logs/ct/v1/get-roots
 
-This command should return a JSON response containing the trusted root certificates that the log accepts. If the server is running correctly, you'll see a response like:
+curl --silent http://localhost:8080/logs/ct/v1/get-roots | jq '.certificates | length'
 
-```json
-{
-  "certificates": [
-    "MIIC..."
-  ]
-}
+curl --silent http://localhost:8080/logs/ct/v1/get-roots | jq -r '.certificates[0]' | base64 -d | openssl x509 -inform DER -text -noout
 ```
 
 
-### Creating and Submitting a Precertificate
+### Exercise: Creating and Submitting a Precertificate
 
 To implement Certificate Transparency for your certificates, follow this workflow:
 
@@ -407,11 +415,11 @@ ISSUER_DER_BASE64=$(openssl x509 -in issuer.crt -outform DER | base64 -w 0)
 PRECERT_DER_BASE64=$(openssl x509 -in precert.crt -outform DER | base64 -w 0)
 
 # Create the JSON payload
-REQUEST_DATA=$(cat << EOF
+cat > add-pre-chain_data.json << EOF
 {
   "chain": [
     "${PRECERT_DER_BASE64}",
-    "${ISSUER_DER_BASE64}"
+    "${CA_DER_BASE64}"
   ]
 }
 EOF
@@ -421,8 +429,8 @@ EOF
 ```bash
 curl --silent -X POST \
   -H "Content-Type: application/json" \
-  -d "$REQUEST_DATA" \
-  http://localhost:8080/testlog/ct/v1/add-pre-chain
+  -d @add-pre-chain_data.json \
+  http://localhost:8080/logs/ct/v1/add-pre-chain
 ```
 
 **Create the final certificate** with the SCT extension:
@@ -432,7 +440,7 @@ curl --silent -X POST \
 
 **Verify the SCT embedding:**
 ```bash
-openssl x509 -in final.crt -noout -text
+openssl x509 -in final.pem -noout -text
 ```
 
 **Verify with the `ct-verify` script:**
@@ -443,6 +451,5 @@ Open the [verify.ts](../ct-verify/src/verify.ts) file in the `ct-verify` directo
 
 Once the script is updated, run the verification with:
 ```bash
-npm run ct-verify final.crt ca.crt
+npm run ct-verify ../ssl/scts/final.pem ../ssl/chain-of-trust/ca.pem
 ```
-

@@ -1,7 +1,8 @@
 [req]
 prompt = no
 distinguished_name = dn
-req_extensions = req_ext
+#req_extensions = req_ext
+x509_extensions = req_ext
 
 [dn]
 CN = server-one

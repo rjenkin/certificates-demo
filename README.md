@@ -1,4 +1,4 @@
-# Certificate Learning Lab
+# Certificates Demo: Learning Lab
 
 A comprehensive hands-on repository for mastering SSL/TLS certificates through practical exercises and real-world scenarios. This educational toolkit guides you through the complete certificate lifecycle and ecosystem.
 
@@ -23,15 +23,42 @@ Perfect for developers, security professionals, and system administrators lookin
 
 ## Requirements
 
-These exercises require Docker, OpenSSL, Go, and JQ to be installed.
+**Basic Requirements (Exercises 1-5):**
+- Docker for container-based services
+- OpenSSL for certificate operations
+- JQ for JSON processing
+
+**Additional Requirements (Exercise 6):**
+- Go programming language
+- NodeJS runtime
+- Python 3 (with Pipenv)
+
+If you're behind a corporate proxy or need to use internal package repositories, configure your development environment with these environment variables:
+```bash
+# NodeJS package source
+export NPM_CONFIG_REGISTRY=https://your-internal-proxy/api/npm/npm
+
+# Python pip package source
+export PIP_INDEX_URL=https://your-internal-proxy/api/pypi/org.python.pypi/simple
+
+# Python pipenv package source
+export PIPENV_PYPI_MIRROR=https://your-internal-proxy/api/pypi/org.python.pypi/simple
+
+
+export PIP_DEFAULT_INDEX_URL=https://your-internal-proxy/api/pypi/org.python.pypi/simple
+
+# Go module proxy
+export GOPROXY=https://your-internal-proxy/api/go/gocenter-proxy
+```
 
 
 ## Exercises
 
-1. [Prerequisite CLI commands](./docs/prerequisite_cli_commands.md)
-2. [Start nginx server](./docs/nginx_server.md)
-3. [Self-signed certificates](./docs/selfsigned_certificates.md)
-4. [CA-signed certificates](./docs/ca_signed_certificates.md)
-5. [Real world certificates](./docs/realworld_certificates.md)
-6. [Certificate Transparency Logs](./docs/certificate_transparency_logs.md)
+1. [Prerequisite CLI commands](./docs/prerequisite-info.md)
+2. [Start nginx server](./docs/nginx-server.md)
+3. [Self-signed certificates](./docs/selfsigned-certificates.md)
+4. [CA-signed certificates](./docs/casigned-certificates.md)
+5. [Chain of Trust](./docs/chain-of-trust.md)
+6. [Certificate Transparency Logs](./docs/certificate-transparency-logs.md)
+7. [Other tools](./docs/other-tools.md)
 
