@@ -11,8 +11,12 @@ docker/ctfe_config
 ssl/**/*.key
 ssl/**/*.srl
 ssl/**/*.csr
-# ss/**/*.crt
-# ss/**/*.cert
 ssl/**/*.pem
 ssl/**/*.sig
 ssl/**/*.txt
+ssl/**/*.json
+
+sct-encoding/data/*.bin
+sct-encoding/data/*.txt
+sct-encoding/data/*.json
+

@@ -31,7 +31,7 @@ Perfect for developers, security professionals, and system administrators lookin
 **Additional Requirements (Exercise 6):**
 - Go programming language
 - NodeJS runtime
-- Python 3
+- Python 3 (with Pipenv)
 
 If you're behind a corporate proxy or need to use internal package repositories, configure your development environment with these environment variables:
 ```bash
@@ -39,10 +39,13 @@ If you're behind a corporate proxy or need to use internal package repositories,
 export NPM_CONFIG_REGISTRY=https://your-internal-proxy/api/npm/npm
 
 # Python pip package source
-export PIP_INDEX_URL=https://your-internal-proxy/api/pypi/simple
+export PIP_INDEX_URL=https://your-internal-proxy/api/pypi/org.python.pypi/simple
 
 # Python pipenv package source
-export PIPENV_PYPI_MIRROR=https://your-internal-proxy/api/pypi/simple
+export PIPENV_PYPI_MIRROR=https://your-internal-proxy/api/pypi/org.python.pypi/simple
+
+
+export PIP_DEFAULT_INDEX_URL=https://your-internal-proxy/api/pypi/org.python.pypi/simple
 
 # Go module proxy
 export GOPROXY=https://your-internal-proxy/api/go/gocenter-proxy

@@ -9,7 +9,7 @@ import os
 import struct
 import sys
 import asn1tools
-from src.sct_json_encoders import SCTJSONEncoder
+from sct_json_encoders import SCTJSONEncoder
 
 def extract_sct_list(data):
     # Compile the ASN.1 specification

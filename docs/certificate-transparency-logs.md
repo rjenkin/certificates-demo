@@ -19,18 +19,14 @@ A certificate can be submitted to multiple logs.
 
 Using certificates downloaded during the "Real world certificates" exercise, we'll verify the embedded Signed Certificate Timestamps (SCTs) against public Certificate Transparency logs. This verification process demonstrates how browsers and other systems can cryptographically validate that certificates were properly logged before being trusted.
 
-Go to the `ct-verify` directory and install the required dependencies by running either:
+Go to the `ct-verify` directory and install the required dependencies by running:
 ```bash
-# To install packages directly from npmjs.org
 npm install
-
-# To install packages through an NPM registry
-npm install --registry https://artifictory.internal.cba/api/npm/npm
 ```
 
 After installation completes, run the verification script by providing both the certificate and its issuer certificate as arguments:
 ```bash
-npm run ct-verify ../cert1.pem ../cert2.pem
+npm run ct-verify ../ssl/chain-of-trust/cert1.pem ../ssl/chain-of-trust/cert2.pem
 ```
 
 The script will examine the certificate for embedded Signed Certificate Timestamps (SCTs), identify which Certificate Transparency logs issued them, verify their cryptographic signatures, and report the results. This verification demonstrates the same process that browsers use to ensure certificates have been properly logged before being trusted for secure connections.
@@ -62,7 +58,7 @@ To locate which Certificate Transparency log issued a particular SCT, you need t
 First, examine the certificate to find the Log ID embedded in its SCTs:
 
 ```bash
-openssl x509 -in cert1.pem -noout -text
+openssl x509 -in ssl/chain-of-trust/cert1.pem -noout -text
 ```
 
 In the output, look for the "CT Precertificate SCTs" section:
@@ -132,6 +128,11 @@ curl --silent https://nessie2025.ct.digicert.com/log/ct/v1/get-sth | jq .
 
 
 ### Get entries
+
+This endpoint returns an entry using it's index in the log.
+
+> Note: this endpoint might not be exposed on all CT Log servers
+
 ```bash
 curl --silent "https://nessie2025.ct.digicert.com/log/ct/v1/get-entries?start=0&end=0" | jq .
 {
@@ -210,7 +211,7 @@ The returned `leaf_index` identifies the certificate's position in the log, whil
 The `get-entry-and-proof` endpoint retrieves both a specific log entry and its associated cryptographic proof, enabling verification that the entry is included in the Merkle Tree at the specified position without downloading the entire log.
 
 ```bash
-curl --silent "http://localhost:8080/testlog/ct/v1/get-entry-and-proof?leaf_index=0&tree_size=9" | jq .
+curl --silent "http://localhost:8080/logs/ct/v1/get-entry-and-proof?leaf_index=0&tree_size=9" | jq .
 {
   "leaf_input": "...Base 64 encoded MerkleTreeLeaf...",
   "extra_data": "...",
@@ -284,7 +285,7 @@ The SCT extension in certificates follows a specific binary structure defined in
 
 Find the offset for the SCT extension data:
 ```bash
-openssl asn1parse -in cert1.pem
+openssl asn1parse -in ssl/chain-of-trust/cert1.pem | grep -A 1 'CT Precertificate SCTs'
 ```
 
 Look for the CT Precertificate SCTs extension:
@@ -295,7 +296,7 @@ Look for the CT Precertificate SCTs extension:
 
 Extract the extension value at offset for the octet string:
 ```bash
-openssl asn1parse -in cert1.pem -strparse "1177"
+openssl asn1parse -in ssl/chain-of-trust/cert1.pem -strparse "1177"
 
 0:d=0  hl=4 l= 363 prim: OCTET STRING      [HEX DUMP]:0169007600E6D2...AD
 ```
@@ -329,31 +330,34 @@ The SCT extension uses a nested structure:
 Understanding the precise binary structure of SCTs is essential for properly encoding them from your own log server. In this exercise, extract the SCT as binary and output to a text file. Annotate the text file with the meaning of each byte.
 
 ```bash
-openssl asn1parse -in cert1.pem -strparse "..offset.." -out sct_raw.bin -noout
+openssl asn1parse -in ssl/chain-of-trust/cert1.pem -strparse "..offset.." -out sct-encoding/data/cert1_scts.bin -noout
 
-xxd -c 1 --decimal sct_raw.bin > sct_raw.txt
+xxd -c 1 --decimal sct-encoding/data/cert1_scts.bin > sct-encoding/data/cert1_scts.bin.txt
 ```
 
 ### Exercise: script to extract SCT data to JSON
 
-Update the `sct_decode.py` script to output the sct_raw.bin as JSON. Unit tests have been setup to ensure the code is output to the expected format.
+Update the `sct_decode.py` script to output the `cert1_scts.bin` as JSON. Unit tests have been setup to ensure the code is output to the expected format.
 
 When the script is working, output the response to a JSON file:
 ```bash
-pipenv run decode --sct ../sct_raw.bin > scts.json
+pipenv run decode --sct data/cert1_scts.bin > data/cert1_scts.json
 ```
 
 ### Exercise: script to encode SCT data into a certificate
 
-Update the `sct-encoding/src/sct_encode.py` script to convert the JSON back to binary. By comparing the output with the original `sct_raw.bin` we can verify that the script is working correctly, and use this for embedding our own SCTs into our certificates.
+Update the `sct-encoding/src/sct_encode.py` script to convert the JSON back to binary. By comparing the output with the original `cert1_scts.bin` we can verify that the script is working correctly, and use this for embedding our own SCTs into our certificates.
 
 ```bash
-xxd -c 1 --decimal sct_output.bin > sct_output.txt
-
-diff --color=always --side-by-side ../sct_raw.txt sct_output.txt
-git diff --no-index --word-diff ../sct_raw.txt sct_output.txt
+pipenv run encode --scts data/cert1_scts.json --binary-output data/cert1_scts_recoded.bin
 ```
 
+```bash
+xxd -c 1 --decimal data/cert1_scts_recoded.bin > data/cert1_scts_recoded.bin.txt
+
+diff --color=always --side-by-side data/cert1_scts.bin.txt data/cert1_scts_recoded.bin.txt
+git diff --no-index --word-diff data/cert1_scts.bin.txt data/cert1_scts_recoded.bin.txt
+```
 
 ## Running a local CT Log server
 
@@ -376,7 +380,7 @@ To run the local CT log server:
  - `submodules/certificate-transparency-go`
  - `submodules/trillian`
 2. Start the log server:
- - If you're behind a proxy, you may need to set the GO proxy: `export GOPROXY=https://...artifactory.../api/go/gocenter-proxy`
+ - If you're behind a proxy, you may need to set the GOPROXY environment variable
  - Run the CTFE script: `./scripts/ctfe.sh`
 
 
@@ -384,23 +388,17 @@ The script should create directory `docker/ctfe_config`. In that directory there
 
 **Test server:**
 
-The base URL of the local CT server should be `http://localhost:8080/testlog`. Test that it's running by calling an endpoint:
+The base URL of the local CT server should be `http://localhost:8080/logs`. Test that it's running by calling an endpoint:
 ```bash
-curl http://localhost:8080/testlog/ct/v1/get-roots
-```
+curl http://localhost:8080/logs/ct/v1/get-roots
 
-This command should return a JSON response containing the trusted root certificates that the log accepts. If the server is running correctly, you'll see a response like:
+curl --silent http://localhost:8080/logs/ct/v1/get-roots | jq '.certificates | length'
 
-```json
-{
-  "certificates": [
-    "MIIC..."
-  ]
-}
+curl --silent http://localhost:8080/logs/ct/v1/get-roots | jq -r '.certificates[0]' | base64 -d | openssl x509 -inform DER -text -noout
 ```
 
 
-### Creating and Submitting a Precertificate
+### Exercise: Creating and Submitting a Precertificate
 
 To implement Certificate Transparency for your certificates, follow this workflow:
 
@@ -417,11 +415,11 @@ ISSUER_DER_BASE64=$(openssl x509 -in issuer.crt -outform DER | base64 -w 0)
 PRECERT_DER_BASE64=$(openssl x509 -in precert.crt -outform DER | base64 -w 0)
 
 # Create the JSON payload
-REQUEST_DATA=$(cat << EOF
+cat > add-pre-chain_data.json << EOF
 {
   "chain": [
     "${PRECERT_DER_BASE64}",
-    "${ISSUER_DER_BASE64}"
+    "${CA_DER_BASE64}"
   ]
 }
 EOF
@@ -431,8 +429,8 @@ EOF
 ```bash
 curl --silent -X POST \
   -H "Content-Type: application/json" \
-  -d "$REQUEST_DATA" \
-  http://localhost:8080/testlog/ct/v1/add-pre-chain
+  -d @add-pre-chain_data.json \
+  http://localhost:8080/logs/ct/v1/add-pre-chain
 ```
 
 **Create the final certificate** with the SCT extension:
@@ -442,7 +440,7 @@ curl --silent -X POST \
 
 **Verify the SCT embedding:**
 ```bash
-openssl x509 -in final.crt -noout -text
+openssl x509 -in final.pem -noout -text
 ```
 
 **Verify with the `ct-verify` script:**
@@ -453,232 +451,5 @@ Open the [verify.ts](../ct-verify/src/verify.ts) file in the `ct-verify` directo
 
 Once the script is updated, run the verification with:
 ```bash
-npm run ct-verify final.crt ca.crt
+npm run ct-verify ../ssl/scts/final.pem ../ssl/chain-of-trust/ca.pem
 ```
-
-
-
-
-
-
-
-
-
-https://www.gstatic.com/ct/log_list/v3/all_logs_list.json
-
-certificate-transparency-go directory
-go mod tidy
-go install ./client/ctclient
-export PATH=$PATH:$(go env GOPATH)/bin
-ctclient --help
-ctclient get-sth --log_uri=http://localhost:8080/testlog
-
-
-ctclient get-entries --first 1 --last 1 --log_uri=http://localhost:8080/testlog
-
-ctclient get-roots --log_uri=http://localhost:8080/testlog
-
-
-
-```
-# Check if a certificate is in a specific log
-ct-fetch-scts -cert your_cert.pem -log_uri https://ct.googleapis.com/logs/xenon2023/
-
-
-# Get inclusion proofs for a certificate
-ct-fetch-scts -cert your_cert.pem -log_uri https://ct.googleapis.com/logs/xenon2023/ -get_proof
-
-
-# Extract and verify embedded SCTs
-ct-verify-sct -cert your_cert.pem
-
-
-# Download the latest log list
-loglist-tool getloglist -log_list https://www.gstatic.com/ct/log_list/v3/all_logs_list.json -out loglist.json
-
-# Check which logs are active
-loglist-tool checklog -log_list loglist.json
-
-# Filter logs by group
-loglist-tool filterlogs -log_list loglist.json -operator "Google"
-
-```
-
-
-
-ctclient add-chain \
-  -log_uri=https://ct.googleapis.com/logs/argon2023/ \
-  -cert=leaf.pem \
-  -issuer=issuer.pem
-
-
-
-
-
-
-<!-- 
-**Adding precertificate to the chain:**
-
-To get the Signed Certificate Timestamp into your final certificate, you need to upload a precertificate. A precertificate is identical to the final certificate except that it contains a CT Poison extension (1.3.6.1.4.1.11129.2.4.3 = critical,ASN1:NULL) and the final certificate contains the Signed Certificate Timestamp list (1.3.6.1.4.1.11129.2.4.5 = ASN1:FORMAT:HEX,OCTETSTRING:...).
-
-```bash
-curl --silent -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"chain":["Base64 encoded DER (precert)", "Base64 encoded DER (CA)"]}' \
-  https://nessie2025.ct.digicert.com/log/ct/v1/add-pre-chain
-```
-
-Response:
-```json
-{
-  "sct_version": 0,
-  "id": "jzsf74xD/iFFMEsi9GK0xKM8DIRLaWXmt0Fb8ho9Jw0=",
-  "timestamp": 1747266466681,
-  "extensions": "",
-  "signature": "BAMARzBFAiEAs2ZUwqWrOYHxTsxIBngcUYEci4Wt/x7XJ/Q4gvL4UhICIHIJyiGCf61E5WIHvl+bk70695JzgKqS57+hrWym6iBC"
-}
-```
-
-Debug the JSON:
-```bash
-echo -n "BAMARzBFAiEAs2ZUwqWrOYHxTsxIBngcUYEci4Wt/x7XJ/Q4gvL4UhICIHIJyiGCf61E5WIHvl+bk70695JzgKqS57+hrWym6iBC" | base64 -d | xxd -c 1
-``` -->
-
-https://datatracker.ietf.org/doc/html/rfc5246#page-46
-```c
-enum {
-    none(0), md5(1), sha1(2), sha224(3), sha256(4), sha384(5),
-    sha512(6), (255)
-} HashAlgorithm;
-
-enum { anonymous(0), rsa(1), dsa(2), ecdsa(3), (255) }
-  SignatureAlgorithm;
-
-struct {
-      HashAlgorithm hash;
-      SignatureAlgorithm signature;
-} SignatureAndHashAlgorithm;
-```
-
-Bytes:
-- 1 Hash
-- 2 Signature
-- 3-4 Length
-- 4 Sequence
-- 5 Length
-- 6 Int
-- 7 Int length
-
-```bash
-# Examine the SCT response:
-jq -r '.[0].signature' sct_list.json | base64 -d | xxd -c 1
-```
-
-```text
-00000000: 04  . # SHA256
-00000001: 03  . # ECDSA
-00000002: 00  . # Length
-00000003: 47  G # Length
-00000004: 30  0 # Sequence
-00000005: 45  E # 69
-
-00000006: 02  . # Int
-00000007: 21  ! 33
-
-00000008: 00  .
-00000009: b3  .
-00000010: 66  f
-00000011: 54  T
-00000012: c2  .
-00000013: a5  .
-00000014: ab  .
-00000015: 39  9
-00000016: 81  .
-00000017: f1  .
-00000018: 4e  N
-00000019: cc  .
-00000020: 48  H
-00000021: 06  .
-00000022: 78  x
-00000023: 1c  .
-00000024: 51  Q
-00000025: 81  .
-00000026: 1c  .
-00000027: 8b  .
-00000028: 85  .
-00000029: ad  .
-00000030: ff  .
-00000031: 1e  .
-00000032: d7  .
-00000033: 27  '
-00000034: f4  .
-00000035: 38  8
-00000036: 82  .
-00000037: f2  .
-00000038: f8  .
-00000039: 52  R
-00000040: 12  .
-
-00000041: 02  . # Int
-00000042: 20    # 32
-00000043: 72  r
-00000044: 09  .
-00000045: ca  .
-00000046: 21  !
-00000047: 82  .
-00000048: 7f  .
-00000049: ad  .
-00000050: 44  D
-00000051: e5  .
-00000052: 62  b
-00000053: 07  .
-00000054: be  .
-00000055: 5f  _
-00000056: 9b  .
-00000057: 93  .
-00000058: bd  .
-00000059: 3a  :
-00000060: f7  .
-00000061: 92  .
-00000062: 73  s
-00000063: 80  .
-00000064: aa  .
-00000065: 92  .
-00000066: e7  .
-00000067: bf  .
-00000068: a1  .
-00000069: ad  .
-00000070: 6c  l
-00000071: a6  .
-00000072: ea  .
-00000073: 20   
-00000074: 42  B
-```
-
-**Encoding the SCT:**
-
-
-
-Adding final certificate to the chain:
-
-```bash
-curl --silent -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"chain":["Base64 encoded DER (final cert)", "Base64 encoded DER (CA)"]}' \
-  https://nessie2025.ct.digicert.com/log/ct/v1/add-chain
-```
-
-
-**Get Signed Tree Head consistency:**
-```bash
-curl --silent "http://localhost:8080/testlog/ct/v1/get-sth-consistency?first=0&second=1" | jq .
-{
-  "consistency": [
-    "..hash..",
-    "..hash.."
-  ]
-}
-```
-
-**Verify your certificate exists in the log server:**
-
