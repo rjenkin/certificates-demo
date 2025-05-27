@@ -7,51 +7,12 @@ docs/*.bkp
 # CTFE config
 docker/ctfe_config
 
-# SSL files for docker
-docker/ssl/*.key
-docker/ssl/*.srl
-docker/ssl/*.crt
-docker/ssl/*.csr
-
-# Old files
-old
-**/old/
-
-selfsigned.csr.txt
-selfsigned.crt.txt
-signing-test.txt
-signing-test.sig
-selfsigned-2.csr.txt
-selfsigned-2.crt.txt
-ca.crt.txt
-server-one.csr.txt
-server-two.csr.txt
-server-one.crt.txt
-server-two.crt.txt
-bundle.pem
-cert1.pem
-cert1.purpose.pem
-cert1.purpose.txt
-cert1.txt
-cert2.pem
-cert2.purpose.pem
-cert2.purpose.txt
-cert2.txt
-cert3.pem
-cert3.purpose.pem
-cert3.purpose.txt
-cert3.txt
-
-three-tier-certificates/*.crt
-three-tier-certificates/*.csr
-three-tier-certificates/*.key
-
-sct_raw.bin
-sct_raw.txt
-
-scripts/*.cnf
-scripts/*.crt
-scripts/*.csr
-scripts/*.json
-scripts/*.bin
-scripts/*.txt
+# SSL files
+ssl/**/*.key
+ssl/**/*.srl
+ssl/**/*.csr
+# ss/**/*.crt
+# ss/**/*.cert
+ssl/**/*.pem
+ssl/**/*.sig
+ssl/**/*.txt
