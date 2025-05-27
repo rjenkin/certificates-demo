@@ -3,7 +3,7 @@
 
 # Work out of the three tier certificates directory
 cd $(dirname "$0")
-cd ../three-tier-certificates
+cd ../ssl/three-tier-certificates
 
 #
 # Root CA

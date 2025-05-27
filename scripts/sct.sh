@@ -90,9 +90,11 @@ SCT_BASE64=$(echo "$SCT_RESPONSE" | jq -r '.signature')
 # Config to final certificate.
 # echo "$SCT_BASE64" | base64 -d > sct.bin
 
-DATA=$(pipenv run python sct_encode.py --scts sct_response_latest.json)
+# Update reference...
+pushd ../sct-encoding > /dev/null
+DATA=$(pipenv run encode --scts ../scripts/sct_response_latest.json)
+popd > /dev/null
 echo "Adding data: $DATA"
-
 
 cat > final_cert.cnf << EOF
 [req]

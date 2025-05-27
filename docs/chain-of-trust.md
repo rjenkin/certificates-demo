@@ -1,4 +1,4 @@
-# Real world certificates
+# Certificate Chain of Trust
 
 This section guides you through retrieving certificates from live websites, analyzing their structure and properties, and understanding how production certificates differ from the simpler examples created in previous exercises. You'll learn to extract certificates using OpenSSL's s_client, inspect detailed certificate extensions, and compare different certificates in a certificate chain to understand trust relationships in real-world deployments. Finally we'll try to recreate those certificates.
 
@@ -76,8 +76,8 @@ git restore --staged cert1.txt cert2.txt cert3.txt
 **When completed verify that the certificates are valid:**
 
 ```bash
-openssl verify -CAfile three-tier-certificates/ca.crt three-tier-certificates/intermediate.crt
+openssl verify -CAfile ssl/three-tier-certificates/ca.crt ssl/three-tier-certificates/intermediate.crt
 
-cat three-tier-certificates/ca.crt three-tier-certificates/intermediate.crt > three-tier-certificates/bundle.crt
-openssl verify -CAfile three-tier-certificates/bundle.crt three-tier-certificates/server.crt
+cat three-tier-certificates/ca.crt ssl/three-tier-certificates/intermediate.crt > ssl/three-tier-certificates/bundle.crt
+openssl verify -CAfile ssl/three-tier-certificates/bundle.crt ssl/three-tier-certificates/server.crt
 ```

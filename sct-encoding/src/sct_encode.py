@@ -1,6 +1,6 @@
 #
 # This script takes a SCT in JSON format and encodes it into a value that can be inserted into a certificate
-# Usage: pipenv run python sct_encode.py --scts <SCT json file>
+# Usage: pipenv run encode --scts <SCT json file>
 #
 import argparse
 import base64
@@ -87,7 +87,7 @@ def encode_binary_sct(filename_json, filename_binary):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process SCT JSON to binary.')
-    parser.add_argument('--scts', help='Path to the JSON file containing SCTs')
+    parser.add_argument('--scts', help='Path to the JSON file containing SCTs', required=True)
     parser.add_argument('--binary-output', help='Filename to save the binary SCT output', default='sct_output.bin')
     args = parser.parse_args()
 

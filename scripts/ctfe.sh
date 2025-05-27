@@ -43,7 +43,12 @@ cd $GIT_HOME
 CTFE_CONF_DIR="$REPO_ROOT/docker/ctfe_config"
 mkdir -p ${CTFE_CONF_DIR}
 
-TREE_ID=$(go run github.com/google/trillian/cmd/createtree@master --admin_server=localhost:8090)
+TREE_ID=$(go run github.com/googleaaa/trillian/cmd/createtree@master --admin_server=localhost:8090)
+if [ -z "$TREE_ID" ]; then
+    echo "Failed to create tree or retrieve TREE_ID."
+    echo "If behind a corporate proxy, set the Go package proxy environment variable: export GOPROXY=https://your-internal-proxy/api/go/proxy"
+    exit 1
+fi
 
 sed "s/@TREE_ID@/${TREE_ID}/" ${GIT_HOME}/certificate-transparency-go/trillian/examples/deployment/docker/ctfe/ct_server.cfg > ${CTFE_CONF_DIR}/ct_server.cfg
 

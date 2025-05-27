@@ -1,5 +1,7 @@
 # Certificate Transparency Logs
 
+> **Preparation Note:** Setting up the local CT log server later in this exercise requires downloading git submodules and Docker images, which can take some time. To save time later, you can run the setup commands in the `Start local log server` section now while you continue with the current exercises.
+
 Certificate Transparency logs help protect end users by making it possible to detect and fix fraudulent or mistakenly issued website security certificates, reducing the risk of impersonation or malicious websites.
 
 When a certificate is issued by a Certificate Authority, it can be submitted to public, append-only CT logs maintained by independent operators. These logs create cryptographically verifiable records of all certificates, allowing website owners, browsers, and security researchers to monitor and audit certificate issuance. Each logged certificate receives a Signed Certificate Timestamp (SCT) as proof of inclusion, which can be embedded in the certificate itself.
@@ -17,13 +19,21 @@ A certificate can be submitted to multiple logs.
 
 Using certificates downloaded during the "Real world certificates" exercise, we'll verify the embedded Signed Certificate Timestamps (SCTs) against public Certificate Transparency logs. This verification process demonstrates how browsers and other systems can cryptographically validate that certificates were properly logged before being trusted.
 
-> Note: this step required NodeJS installed
+Go to the `ct-verify` directory and install the required dependencies by running either:
+```bash
+# To install packages directly from npmjs.org
+npm install
 
-In the `ct-verify` directory, run:
-- `npm install`
-- `npm run ct-verify ../cert1.pem ../cert2.pem`
+# To install packages through an NPM registry
+npm install --registry https://artifictory.internal.cba/api/npm/npm
+```
 
-The script should output the results of certificate transparency verification.
+After installation completes, run the verification script by providing both the certificate and its issuer certificate as arguments:
+```bash
+npm run ct-verify ../cert1.pem ../cert2.pem
+```
+
+The script will examine the certificate for embedded Signed Certificate Timestamps (SCTs), identify which Certificate Transparency logs issued them, verify their cryptographic signatures, and report the results. This verification demonstrates the same process that browsers use to ensure certificates have been properly logged before being trusted for secure connections.
 
 
 ## How verification works
@@ -326,16 +336,16 @@ xxd -c 1 --decimal sct_raw.bin > sct_raw.txt
 
 ### Exercise: script to extract SCT data to JSON
 
-Update the sct_decode script to output the sct_raw.bin as JSON. Unit tests have been setup to ensure the code is output to the expected format.
+Update the `sct_decode.py` script to output the sct_raw.bin as JSON. Unit tests have been setup to ensure the code is output to the expected format.
 
 When the script is working, output the response to a JSON file:
 ```bash
-pipenv run python sct_decode.py --sct ../sct_raw.bin > scts.json
+pipenv run decode --sct ../sct_raw.bin > scts.json
 ```
 
 ### Exercise: script to encode SCT data into a certificate
 
-Update the sct_encode script to convert the JSON back to binary. By comparing the output with the original `sct_raw.bin` we can verify that the script is working correctly, and use this for embedding our own SCTs into our certificates.
+Update the `sct-encoding/src/sct_encode.py` script to convert the JSON back to binary. By comparing the output with the original `sct_raw.bin` we can verify that the script is working correctly, and use this for embedding our own SCTs into our certificates.
 
 ```bash
 xxd -c 1 --decimal sct_output.bin > sct_output.txt
@@ -362,13 +372,13 @@ This practical experience with a local log server is purely educational - produc
 Google's [Certificate Transparency Go](https://github.com/google/certificate-transparency-go) project provides a reference implementation of a CT log server that can be run locally for testing and educational purposes. This implementation functions as a "CT personality" layer on top of [Trillian](https://github.com/google/trillian), which serves as the underlying Merkle tree database.
 
 To run the local CT log server:
-1. Ensure both repositories are available in the submodules directory:
- - `certificate-transparency-go`
- - `trillian`
-2. Start the log server using the provided script:
-```bash
-./scripts/ctfe.sh
-```
+1. Initialise the Git submodules with command: `git submodule update --init --recursive`. Then ensure both repositories are available in the submodules directory:
+ - `submodules/certificate-transparency-go`
+ - `submodules/trillian`
+2. Start the log server:
+ - If you're behind a proxy, you may need to set the GO proxy: `export GOPROXY=https://...artifactory.../api/go/gocenter-proxy`
+ - Run the CTFE script: `./scripts/ctfe.sh`
+
 
 The script should create directory `docker/ctfe_config`. In that directory there is a configuration file `ct_server.cfg` and a root certificate called `fake-ca.cert`. To add your own certificates to the log, copy your root CA into the config directory and update the `roots_pem_file` parameter in `ct_server.cfg`. A restart of the `ctfe-1` container is required for the changes to take affect.
 
@@ -445,4 +455,230 @@ Once the script is updated, run the verification with:
 ```bash
 npm run ct-verify final.crt ca.crt
 ```
+
+
+
+
+
+
+
+
+
+https://www.gstatic.com/ct/log_list/v3/all_logs_list.json
+
+certificate-transparency-go directory
+go mod tidy
+go install ./client/ctclient
+export PATH=$PATH:$(go env GOPATH)/bin
+ctclient --help
+ctclient get-sth --log_uri=http://localhost:8080/testlog
+
+
+ctclient get-entries --first 1 --last 1 --log_uri=http://localhost:8080/testlog
+
+ctclient get-roots --log_uri=http://localhost:8080/testlog
+
+
+
+```
+# Check if a certificate is in a specific log
+ct-fetch-scts -cert your_cert.pem -log_uri https://ct.googleapis.com/logs/xenon2023/
+
+
+# Get inclusion proofs for a certificate
+ct-fetch-scts -cert your_cert.pem -log_uri https://ct.googleapis.com/logs/xenon2023/ -get_proof
+
+
+# Extract and verify embedded SCTs
+ct-verify-sct -cert your_cert.pem
+
+
+# Download the latest log list
+loglist-tool getloglist -log_list https://www.gstatic.com/ct/log_list/v3/all_logs_list.json -out loglist.json
+
+# Check which logs are active
+loglist-tool checklog -log_list loglist.json
+
+# Filter logs by group
+loglist-tool filterlogs -log_list loglist.json -operator "Google"
+
+```
+
+
+
+ctclient add-chain \
+  -log_uri=https://ct.googleapis.com/logs/argon2023/ \
+  -cert=leaf.pem \
+  -issuer=issuer.pem
+
+
+
+
+
+
+<!-- 
+**Adding precertificate to the chain:**
+
+To get the Signed Certificate Timestamp into your final certificate, you need to upload a precertificate. A precertificate is identical to the final certificate except that it contains a CT Poison extension (1.3.6.1.4.1.11129.2.4.3 = critical,ASN1:NULL) and the final certificate contains the Signed Certificate Timestamp list (1.3.6.1.4.1.11129.2.4.5 = ASN1:FORMAT:HEX,OCTETSTRING:...).
+
+```bash
+curl --silent -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"chain":["Base64 encoded DER (precert)", "Base64 encoded DER (CA)"]}' \
+  https://nessie2025.ct.digicert.com/log/ct/v1/add-pre-chain
+```
+
+Response:
+```json
+{
+  "sct_version": 0,
+  "id": "jzsf74xD/iFFMEsi9GK0xKM8DIRLaWXmt0Fb8ho9Jw0=",
+  "timestamp": 1747266466681,
+  "extensions": "",
+  "signature": "BAMARzBFAiEAs2ZUwqWrOYHxTsxIBngcUYEci4Wt/x7XJ/Q4gvL4UhICIHIJyiGCf61E5WIHvl+bk70695JzgKqS57+hrWym6iBC"
+}
+```
+
+Debug the JSON:
+```bash
+echo -n "BAMARzBFAiEAs2ZUwqWrOYHxTsxIBngcUYEci4Wt/x7XJ/Q4gvL4UhICIHIJyiGCf61E5WIHvl+bk70695JzgKqS57+hrWym6iBC" | base64 -d | xxd -c 1
+``` -->
+
+https://datatracker.ietf.org/doc/html/rfc5246#page-46
+```c
+enum {
+    none(0), md5(1), sha1(2), sha224(3), sha256(4), sha384(5),
+    sha512(6), (255)
+} HashAlgorithm;
+
+enum { anonymous(0), rsa(1), dsa(2), ecdsa(3), (255) }
+  SignatureAlgorithm;
+
+struct {
+      HashAlgorithm hash;
+      SignatureAlgorithm signature;
+} SignatureAndHashAlgorithm;
+```
+
+Bytes:
+- 1 Hash
+- 2 Signature
+- 3-4 Length
+- 4 Sequence
+- 5 Length
+- 6 Int
+- 7 Int length
+
+```bash
+# Examine the SCT response:
+jq -r '.[0].signature' sct_list.json | base64 -d | xxd -c 1
+```
+
+```text
+00000000: 04  . # SHA256
+00000001: 03  . # ECDSA
+00000002: 00  . # Length
+00000003: 47  G # Length
+00000004: 30  0 # Sequence
+00000005: 45  E # 69
+
+00000006: 02  . # Int
+00000007: 21  ! 33
+
+00000008: 00  .
+00000009: b3  .
+00000010: 66  f
+00000011: 54  T
+00000012: c2  .
+00000013: a5  .
+00000014: ab  .
+00000015: 39  9
+00000016: 81  .
+00000017: f1  .
+00000018: 4e  N
+00000019: cc  .
+00000020: 48  H
+00000021: 06  .
+00000022: 78  x
+00000023: 1c  .
+00000024: 51  Q
+00000025: 81  .
+00000026: 1c  .
+00000027: 8b  .
+00000028: 85  .
+00000029: ad  .
+00000030: ff  .
+00000031: 1e  .
+00000032: d7  .
+00000033: 27  '
+00000034: f4  .
+00000035: 38  8
+00000036: 82  .
+00000037: f2  .
+00000038: f8  .
+00000039: 52  R
+00000040: 12  .
+
+00000041: 02  . # Int
+00000042: 20    # 32
+00000043: 72  r
+00000044: 09  .
+00000045: ca  .
+00000046: 21  !
+00000047: 82  .
+00000048: 7f  .
+00000049: ad  .
+00000050: 44  D
+00000051: e5  .
+00000052: 62  b
+00000053: 07  .
+00000054: be  .
+00000055: 5f  _
+00000056: 9b  .
+00000057: 93  .
+00000058: bd  .
+00000059: 3a  :
+00000060: f7  .
+00000061: 92  .
+00000062: 73  s
+00000063: 80  .
+00000064: aa  .
+00000065: 92  .
+00000066: e7  .
+00000067: bf  .
+00000068: a1  .
+00000069: ad  .
+00000070: 6c  l
+00000071: a6  .
+00000072: ea  .
+00000073: 20   
+00000074: 42  B
+```
+
+**Encoding the SCT:**
+
+
+
+Adding final certificate to the chain:
+
+```bash
+curl --silent -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"chain":["Base64 encoded DER (final cert)", "Base64 encoded DER (CA)"]}' \
+  https://nessie2025.ct.digicert.com/log/ct/v1/add-chain
+```
+
+
+**Get Signed Tree Head consistency:**
+```bash
+curl --silent "http://localhost:8080/testlog/ct/v1/get-sth-consistency?first=0&second=1" | jq .
+{
+  "consistency": [
+    "..hash..",
+    "..hash.."
+  ]
+}
+```
+
+**Verify your certificate exists in the log server:**
 

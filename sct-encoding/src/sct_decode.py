@@ -1,6 +1,6 @@
 #
 # This script thats SCT data from a certificate in ASN.1 format with an octet string and outputs as JSON
-# Usage: pipenv run python sct_decode.py --sct <SCT binary file>
+# Usage: pipenv run decode --sct <SCT binary file>
 #
 import argparse
 import base64
@@ -9,24 +9,7 @@ import os
 import struct
 import sys
 import asn1tools
-
-class SCTEncoder(json.JSONEncoder):
-    """
-    A minimal JSON encoder that preserves object structure.
-    Only handles special data types (like bytes) that JSON can't natively serialize.
-    """
-    def default(self, obj):
-        # Handle bytes by converting to base64 strings
-        # if isinstance(obj, bytes):
-            # return base64.b64encode(obj).decode('ascii')
-
-        # If the object has a __dict__, use that directly
-        if hasattr(obj, '__dict__'):
-            return obj.__dict__
-
-        # Let the default encoder handle everything else
-        return super().default(obj)
-
+from src.sct_json_encoders import SCTJSONEncoder
 
 def extract_sct_list(data):
     # Compile the ASN.1 specification
@@ -87,7 +70,7 @@ def extract_sct_data(sct):
     ext_len = struct.unpack(">H", sct[offset : offset + 2])[0]
     offset += 2
     if ext_len > 0:
-        extensions = sct[offset : offset + ext_len].hex()
+        extensions = sct[offset : offset + ext_len]
         offset += ext_len
 
     # Extract the signature algorithm and signature
@@ -99,7 +82,7 @@ def extract_sct_data(sct):
         'sct_version': version,
         'id': log_id,
         'timestamp': timestamp,
-        "extensions": extensions.decode('ascii'),
+        "extensions": base64.b64encode(extensions).decode('ascii'),
         "signature": signature
     }
 
@@ -110,7 +93,7 @@ def decode_binary_sct(filename):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process an SCT binary file.')
-    parser.add_argument('--sct', help='Path to the SCT binary file')
+    parser.add_argument('--sct', help='Path to the SCT binary file', required=True)
     args = parser.parse_args()
 
     if not os.path.isfile(args.sct):
@@ -119,4 +102,4 @@ if __name__ == "__main__":
 
     sct_list = decode_binary_sct(args.sct)
 
-    print(json.dumps(sct_list, cls=SCTEncoder, indent=2))
+    print(json.dumps(sct_list, cls=SCTJSONEncoder, indent=2))

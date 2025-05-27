@@ -4,11 +4,6 @@ distinguished_name = dn
 req_extensions = req_ext
 
 [dn]
-#C = AU
-#ST = Your State
-#L = Your City
-#O = Your Organization
-#OU = Your Organizational Unit
 CN = MyCertificateAuthority
 
 [req_ext]

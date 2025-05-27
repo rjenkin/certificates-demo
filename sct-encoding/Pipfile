@@ -3,10 +3,16 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[scripts]
+encode = "python src/sct_encode.py"
+decode = "python src/sct_decode.py"
+test = "pytest"
+
 [packages]
 asn1tools = "*"
 
 [dev-packages]
+pytest = "*"
 
 [requires]
 python_version = "3.13"
