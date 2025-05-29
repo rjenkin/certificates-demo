@@ -12,7 +12,7 @@ Certificate Transparency uses a two-step process for logging certificates:
 
 The precertificate and final certificate are identical except for these extensions, ensuring that the SCTs remain valid for the final certificate despite being generated for the precertificate. A certificate can be submitted to multiple log servers.
 
-**Topics:**
+This topic has been divided into several parts:
 - [Verifying a SCT](./ct_verifying.md)
 - [Log Servers](./ct_log_servers.md)
 - [SCT encoding](./ct_encoding.md)
