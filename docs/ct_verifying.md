@@ -6,7 +6,7 @@ Using the certificates downloaded during the "Chain of Trust" exercise, we'll ve
 
 **Install packages:**
 
-Go to the `ct-verify` directory and install the required dependencies with:
+Go to the [ct-verify](../ct-verify/) directory on the CLI and install the required dependencies with:
 ```bash
 npm install
 ```
@@ -32,6 +32,8 @@ npm run ct-verify ../ssl/chain-of-trust/cert1.pem ../ssl/chain-of-trust/cert2.pe
 > ```
 
 The script will examine the certificate for embedded Signed Certificate Timestamps (SCTs), identify which Certificate Transparency logs issued them, request the certificate entry from the log, verify the cryptographic proofs, and report the results. This verification demonstrates the same process that browsers use to ensure certificates have been properly logged before being trusted for secure connections.
+
+View the API responses in the [data directory](../ct-verify/data/).
 
 ## How verification works
 
@@ -75,7 +77,7 @@ The Log ID in the certificate is shown as a colon-separated hex string, but Goog
 
 **Step 3: Search for this base64-encoded Log ID**
 
-Now search for this base64-encoded value in Google's official CT log list [https://www.gstatic.com/ct/log_list/v3/all_logs_list.json](https://www.gstatic.com/ct/log_list/v3/all_logs_list.json)
+Now search for this base64-encoded value in Google's official CT log listed above.
 
 ## Next section
 

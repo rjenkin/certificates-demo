@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script generates a chain of trust certificate structure
+# This script generates a Chain of Trust certificate structure
 
 # Work out of the chain of trust directory
 cd $(dirname "$0")

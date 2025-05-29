@@ -1,6 +1,12 @@
 import { b64DecodeBytes } from "./conversion";
 import { CtMerkleProof } from "./ct_log_types";
 
+export interface IValidateProofResult {
+  success: boolean;
+  calculatedRootHashHex?: string;
+  expectedRootHashHex?: string;
+}
+
 /**
  * Validates a Merkle proof from a CT log server
  */
@@ -8,8 +14,7 @@ export async function validateProof(
   proof: CtMerkleProof,
   leafHash: Uint8Array,
   expectedRootHash: Uint8Array,
-  outputHashes = false,
-): Promise<boolean> {
+): Promise<IValidateProofResult> {
   try {
     const calculatedRootHash = await calculateRootHash(
       leafHash,
@@ -17,22 +22,24 @@ export async function validateProof(
       proof.audit_path,
     );
 
-    if (outputHashes) {
-        const calculatedRootHashHex = Array.from(new Uint8Array(calculatedRootHash))
-        .map((byte) => byte.toString(16).padStart(2, "0"))
-        .join("");
-  
-      const expectedRootHashHex = Array.from(new Uint8Array(expectedRootHash))
-        .map((byte) => byte.toString(16).padStart(2, "0"))
-        .join("");
-  
-      console.log("Comparing hashes", calculatedRootHashHex, expectedRootHashHex);  
-    }
+    const calculatedRootHashHex = Array.from(new Uint8Array(calculatedRootHash))
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("");
 
-    return areArraysEqual(calculatedRootHash, expectedRootHash);
+    const expectedRootHashHex = Array.from(new Uint8Array(expectedRootHash))
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("");
+
+    return {
+      success: areArraysEqual(calculatedRootHash, expectedRootHash),
+      calculatedRootHashHex,
+      expectedRootHashHex,
+    }
   } catch (error) {
     console.error("Error validating Merkle proof:", error);
-    return false;
+    return {
+      success: false,
+    };
   }
 }
 
