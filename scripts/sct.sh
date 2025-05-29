@@ -72,7 +72,8 @@ cat > add-pre-chain_data.json << EOF
 EOF
 
 # Try add-pre-chain endpoint (standard for precertificates)
-SCT_RESPONSE=$(curl --silent -X POST \
+echo "Calling add pre chain"
+SCT_RESPONSE=$(curl --noproxy '*' --silent -X POST \
   -H "Content-Type: application/json" \
   -d @add-pre-chain_data.json \
   http://localhost:8080/logs/ct/v1/add-pre-chain)
@@ -168,10 +169,11 @@ EOF
 
 # Try add-chain endpoint (standard for certificates)
 echo -e "\n\nAttempting add-chain..."
-ADD_CHAIN_RESPONSE=$(curl --silent -X POST \
+ADD_CHAIN_RESPONSE=$(curl --noproxy '*' --silent -X POST \
   -H "Content-Type: application/json" \
   -d @add-chain_data.json \
   http://localhost:8080/logs/ct/v1/add-chain)
 
+echo $ADD_CHAIN_RESPONSE
 echo $ADD_CHAIN_RESPONSE | jq .
 echo $ADD_CHAIN_RESPONSE > add-chain_response.json

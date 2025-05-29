@@ -1,4 +1,6 @@
+import fetch from 'node-fetch';
 import { CtLogList, CtLog } from './ct_log_types';
+import { getProxyAgent } from './proxy';
 
 export class CtLogStore {
   public static LOG_LIST_URL = "https://www.gstatic.com/ct/log_list/v3/all_logs_list.json";
@@ -47,13 +49,15 @@ export class CtLogStore {
   }
 
   private async fetchCtLogList(): Promise<CtLogList> {
-    const response = await fetch(CtLogStore.LOG_LIST_URL);
+    const agent = getProxyAgent(CtLogStore.LOG_LIST_URL);
+
+    const response = await fetch(CtLogStore.LOG_LIST_URL, { agent });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as CtLogList;
 
     return data;
   }

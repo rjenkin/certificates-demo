@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+import { getProxyAgent } from './proxy';
 import { CtLogEntry, CtSignedTreeHead, CtMerkleProof } from './ct_log_types';
 
 interface CtEntriesResponse {
@@ -46,12 +48,14 @@ export class CTLogClient {
       url.searchParams.append(key, value.toString());
     }
 
-    const response = await fetch(url);
+    const agent = getProxyAgent(url.toString());
+
+    const response = await fetch(url, { agent });
 
     if (!response.ok) {
       throw new Error(`CT Log request failed: ${response.statusText}`);
     }
 
-    return await response.json();
+    return await response.json() as T;
   }
 }

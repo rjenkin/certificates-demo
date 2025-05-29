@@ -1,5 +1,7 @@
 # Certificate authority signed certificates
 
+Return [home](../README.md)
+
 Using a custom Certificate Authority (CA) for local development simplifies security by requiring you to trust just one root certificate instead of multiple self-signed ones. Once your system trusts your local CA, you can easily generate and use certificates for any number of development services without additional trust configuration, creating a more realistic and streamlined secure development environment.
 
 ![CA signed Certificate](casigned.drawio.png)
@@ -145,7 +147,7 @@ openssl verify -CAfile ssl/casigned/ca.pem ssl/casigned/server-one.pem
 openssl verify -CAfile ssl/casigned/ca.pem ssl/casigned/server-two.pem 
 ```
 
-Our self-signed certificate was not signed by the certificate authority so verification should fail:
+Our self-signed certificate was not signed by the certificate authority so ***verification should fail***:
 ```bash
 openssl verify -CAfile ssl/casigned/ca.pem ssl/selfsigned/certificate-1.pem
 ```
@@ -181,11 +183,11 @@ server {
 **Make a HTTPs request to the server using the CA certificate:**
 
 ```bash
-curl --cacert ssl/casigned/ca.pem --resolve server-one:10000:127.0.0.1 https://server-one:10000
-curl --cacert ssl/casigned/ca.pem --resolve server-two:10000:127.0.0.1 https://server-two:10000
+curl --resolve server-one:10000:127.0.0.1 --noproxy '*' https://server-one:10000/ --cacert ssl/casigned/ca.pem
+curl --resolve server-two:10000:127.0.0.1 --noproxy '*' https://server-two:10000/ --cacert ssl/casigned/ca.pem
 
-curl --cacert ssl/casigned/ca.pem -H 'Host: server-one' https://localhost:10000/ 
-curl --cacert ssl/casigned/ca.pem -H 'Host: server-two' https://localhost:10000/ 
+curl --cacert ssl/casigned/ca.pem -H 'Host: server-one' https://localhost:10000/ --noproxy '*'
+curl --cacert ssl/casigned/ca.pem -H 'Host: server-two' https://localhost:10000/ --noproxy '*'
 ```
 
 ### Identifying Certificate Authorities in Live Connections

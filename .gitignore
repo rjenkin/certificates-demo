@@ -15,8 +15,10 @@ ssl/**/*.pem
 ssl/**/*.sig
 ssl/**/*.txt
 ssl/**/*.json
+ssl/**/*.der
 
 sct-encoding/data/*.bin
 sct-encoding/data/*.txt
 sct-encoding/data/*.json
 
+postdata.json
