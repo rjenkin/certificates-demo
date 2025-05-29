@@ -13,7 +13,7 @@ docker-compose up -d
 
 The Nginx server has been configured with two virtual hosts: `server-one` and `server-two`. Since these hostnames aren't in your local DNS or hosts file, you can access them in two ways: either by passing the desired hostname in the HTTP Host header with curl's `-H 'Host: server-name'` option, or by using the `--resolve` flag to map the hostname to the localhost IP address.
 
-Note: If you're on a corporate network, you may need to adjust your proxy settings to access the locally running Docker server. Below are several ways to make curl requests to localhost - use the method that works best in your environment.
+> Note: If you're on a corporate network, you may need to adjust your proxy settings to access the locally running Docker server. Below are several ways to make curl requests to localhost - use the method that works best in your environment.
 
 ```bash
 curl http://localhost:10000/
