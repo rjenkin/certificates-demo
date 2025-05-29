@@ -59,7 +59,7 @@ openssl verify -CAfile ssl/chain-of-trust/certs-bundle.pem ssl/chain-of-trust/ce
 
 ## Recreate certificates
 
-This exercise involves trying to recreate all three certificate with identical details. To verify whether your certificate matches, we will use a diff tool to identify what is similar or different. Start with the root CA as that's needed to create the intermediate certificate, and finally the server's certificate.
+This exercise involves trying to recreate all three certificates with identical details. To verify whether your certificate matches, we will use a diff tool to identify what is similar or different. Start with the root CA as that's needed to create the intermediate certificate, and finally the server's certificate.
 
 > Note: you won't be able to match the public key or the signature value using your own private keys.
 
@@ -90,7 +90,7 @@ git diff --no-index --word-diff ssl/chain-of-trust/cert1.pem.txt ssl/chain-of-tr
 
 ### Certificate script
 
-Update the config files and `create.sh` script to reconstructs the three-tier certificate hierarchy we examined. Your goal is to match the original certificates as closely as possible, focusing on matching the subject names, extensions, validity periods, and other metadata. You might not be able to match the signature and keys (public key, subject key identifier, and authority key identifier) as we're using different keys. While most details can be updated through the config files, you might need to pass different parameters into the commands within the create script.
+Update the config files and `create.sh` script to reconstruct the three-tier certificate hierarchy we examined. Your goal is to match the original certificates as closely as possible, focusing on matching the subject names, extensions, validity periods, and other metadata. You might not be able to match the signature and keys (public key, subject key identifier, and authority key identifier) as we're using different keys. While most details can be updated through the config files, you might need to pass different parameters into the commands within the create script.
 
 When you've completed your certificate chain, verify its validity:
 
