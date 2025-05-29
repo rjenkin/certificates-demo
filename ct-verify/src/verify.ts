@@ -4,6 +4,7 @@
  * and then verifying the certificate's existence in the CT log using a Merkle proof.
  */
 import fs from 'fs';
+import path from 'path';
 import { b64DecodeBytes, b64EncodeBytes, loadCertificateDER, toHexString, base64EncodeLogId, base64EncodePublicKey } from "./conversion";
 import { CTLogClient } from "./ct_log_client";
 import { CtLogStore } from "./ct_log_store";
@@ -59,6 +60,7 @@ import { validateProof } from "./ct_proof_validation";
         return;
       }
 
+      const debugLog = [];
       for (const sct of scts) {
         const b64LogId = b64EncodeBytes(new Uint8Array(sct.logId));
 
@@ -88,15 +90,27 @@ import { validateProof } from "./ct_proof_validation";
           logSth.tree_size,
         );
 
-        const verificationResult = await validateProof(
+        const results = await validateProof(
           proof,
           leafHash,
           expectedRootHash,
         );
 
-        console.log(`SCT ${verificationResult ? 'successfully verified' : 'verification failed'} in log "${log.description}", "${toHexString(sct.logId)}"`);
+        console.log(`SCT ${results.success ? 'successfully verified' : 'verification failed'} in log "${log.description}", "${toHexString(sct.logId)}"`);
         // console.log(`SCT ${verificationResult ? 'successfully verified' : 'verification failed'} in log "${toHexString(sct.logId)}"`);
+
+        debugLog.push({
+          log,
+          b64LeafHash,
+          logSth,
+          proof,
+          results,
+        });
       }
+
+      // Save the verification results to a file
+      const verifyLogFilename = path.resolve('data', `${path.basename(certFilename)}.json`);
+      fs.writeFileSync(verifyLogFilename, JSON.stringify(debugLog, null, 2), 'utf8');
 
     } catch (error) {
       console.error("Error validating cert:", error);

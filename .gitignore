@@ -1,6 +1,8 @@
 .DS_Store
 Thumbs.db
 
+ct-verify/data/*.json
+
 # Draw.IO backup files
 docs/*.bkp
 
