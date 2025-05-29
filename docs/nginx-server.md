@@ -16,8 +16,8 @@ The Nginx server has been configured with two virtual hosts: `server-one` and `s
 Note: If you're on a corporate network, you may need to adjust your proxy settings to access the locally running Docker server. Below are several ways to make curl requests to localhost - use the method that works best in your environment.
 
 ```bash
-curl https://localhost:10000/
-curl --noproxy '*' https://localhost:10000/
+curl http://localhost:10000/
+curl --noproxy '*' http://localhost:10000/
 
 curl -H 'Host: server-one' http://localhost:10000/
 curl -H 'Host: server-one' --noproxy '*' http://localhost:10000/

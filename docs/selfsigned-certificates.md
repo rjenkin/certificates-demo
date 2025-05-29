@@ -151,7 +151,7 @@ The original certificate was created specifically for the `server-one` domain na
 curl -H 'Host: server-one' --noproxy '*' https://localhost:10000/ --cacert ssl/selfsigned/certificate-1.pem
 
 # Request host "server-one" but through IP address "127.0.0.1"
-curl -H 'Host: server-one' --noproxy '*' https://127.0.1:10000/ --cacert ssl/selfsigned/certificate-1.pem
+curl -H 'Host: server-one' --noproxy '*' https://127.0.0.1:10000/ --cacert ssl/selfsigned/certificate-1.pem
 
 # Request host "server-two"
 curl --resolve server-two:10000:127.0.0.1 --noproxy '*' https://server-two:10000/ --cacert ssl/selfsigned/certificate-1.pem
