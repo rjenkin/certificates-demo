@@ -111,3 +111,7 @@ openssl verify -CAfile ssl/chain-of-trust/ca.pem ssl/chain-of-trust/intermediate
 cat ssl/chain-of-trust/ca.pem ssl/chain-of-trust/intermediate.pem > ssl/chain-of-trust/bundle.pem
 openssl verify -CAfile ssl/chain-of-trust/bundle.pem ssl/chain-of-trust/server.pem
 ```
+
+## Next section
+
+[Certificate Transparency Logs](./certificate-transparency-logs.md)

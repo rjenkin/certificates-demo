@@ -213,3 +213,7 @@ verify return:1
 DONE
 issuer=CN=MyCertificateAuthority
 ```
+
+## Next section
+
+[Chain of Trust](./chain-of-trust.md)

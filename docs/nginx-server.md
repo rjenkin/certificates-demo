@@ -29,3 +29,8 @@ curl -H 'Host: server-two' --noproxy '*' http://localhost:10000/
 curl --resolve server-two:10000:127.0.0.1 http://server-two:10000/
 curl --resolve server-two:10000:127.0.0.1 --noproxy '*' http://server-two:10000/
 ```
+
+## Next section
+
+[Self-signed certificates](./selfsigned-certificates.md)
+

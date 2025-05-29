@@ -62,4 +62,3 @@ export GOPROXY=https://your-internal-proxy/api/go/gocenter-proxy
 5. [Chain of Trust](./docs/chain-of-trust.md)
 6. [Certificate Transparency Logs](./docs/certificate-transparency-logs.md)
 7. [Other tools](./docs/other-tools.md)
-

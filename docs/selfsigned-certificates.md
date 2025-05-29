@@ -236,3 +236,8 @@ curl -H 'Host: server-one' --noproxy '*' https://127.0.1:10000/ --cacert ssl/sel
 ```
 
 While using Subject Alternative Names works for a limited number of hosts, it requires updating and redistributing the certificate whenever a new server is added. A more scalable approach is to establish a private Certificate Authority (CA), which allows you to issue individual certificates for each server while clients need only trust the single CA certificate. This CA-based infrastructure provides more flexibility and better security management for growing environments.
+
+
+## Next section
+
+[CA-signed certificates](./casigned-certificates.md)
