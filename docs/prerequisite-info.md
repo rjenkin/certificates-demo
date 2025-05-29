@@ -100,7 +100,7 @@ echo '{"nested":{"nested1":1,"nested2":2}}' | jq '.nested.nested2'
 
 `curl` is a command-line tool for making HTTP requests.
 
-Note: If you're behind a corporate firewall, you might need to configure a proxy to make external requests.
+> Note: If you're behind a corporate firewall, you might need to configure a proxy to make external requests.
 
 **GET requests:**
 ```bash
