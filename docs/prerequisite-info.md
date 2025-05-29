@@ -2,7 +2,7 @@
 
 Return [home](../README.md)
 
-This section serves as a foundational reference guide, introducing essential command-line tools and data formats commonly used when working with digital certificates. It provides practical examples for manipulating and inspecting certificate-related data, including Base64 encoding/decoding, binary data examination with xxd, JSON processing with jq, and making HTTP requests with curl. Additionally, it covers the critical certificate formats (PEM, DER) and explains Abstract Syntax Notation One (ASN.1) encoding—the underlying structure of digital certificates. These commands and format explanations form the technical toolbox you'll need throughout the certificate exercises, allowing you to decode, inspect, and modify certificate data with confidence.
+This section serves as a foundational reference guide, introducing essential command-line tools and data formats commonly used when working with digital certificates. It provides practical examples for manipulating and inspecting certificate-related data, including Base64 encoding/decoding, binary data examination with `xxd`, JSON processing with `jq`, and making HTTP requests with `curl`. Additionally, it covers the critical certificate formats (PEM, DER) and explains Abstract Syntax Notation One (ASN.1) encoding—the underlying structure of digital certificates. These commands and format explanations form the technical toolbox you'll need throughout the certificate exercises, allowing you to decode, inspect, and modify certificate data.
 
 ## Commands
 
