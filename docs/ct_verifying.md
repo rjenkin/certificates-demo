@@ -33,7 +33,8 @@ npm run ct-verify ../ssl/chain-of-trust/cert1.pem ../ssl/chain-of-trust/cert2.pe
 
 The script will examine the certificate for embedded Signed Certificate Timestamps (SCTs), identify which Certificate Transparency logs issued them, request the certificate entry from the log, verify the cryptographic proofs, and report the results. This verification demonstrates the same process that browsers use to ensure certificates have been properly logged before being trusted for secure connections.
 
-View the API responses in the [data directory](../ct-verify/data/).
+**View the API responses:**
+The API calls from the above command should be saved into the [data directory](../ct-verify/data/). 
 
 ## How verification works
 
