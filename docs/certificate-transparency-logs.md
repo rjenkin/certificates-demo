@@ -2,7 +2,7 @@
 
 Return [home](../README.md)
 
-> **Preparation Note:** Setting up the local CT log server later in this exercise requires downloading git submodules and Docker images, which can take some time. To save time later, you can run the setup commands in the `Start local log server` section now while you continue with the current exercises.
+> **Preparation Note:** Setting up the local CT log server later in this exercise requires downloading git submodules and Docker images, which can take some time. To save time later, you can run the setup commands in the [Start local log server](./ct_certificates.md#start-local-log-server) section now while you continue with the current exercises.
 
 Certificate Transparency logs help protect end users by making it possible to detect and fix fraudulent or mistakenly issued website security certificates, reducing the risk of impersonation or malicious websites. When a certificate is issued by a Certificate Authority, it can be submitted to public, append-only CT logs maintained by independent operators. These logs create cryptographically verifiable records of all certificates, allowing website owners, browsers, and security researchers to monitor and audit certificate issuance. Each logged certificate receives a Signed Certificate Timestamp (SCT) as proof of inclusion, which can be embedded in the certificate itself.
 

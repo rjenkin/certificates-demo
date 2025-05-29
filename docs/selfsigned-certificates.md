@@ -159,11 +159,11 @@ curl --resolve server-two:10000:127.0.0.1 --noproxy '*' https://server-two:10000
 
 ### Subject Name Alternatives
 
-The self-signed certificate was originally created with only the server-one domain name, causing SSL verification to fail when accessing the server via localhost, even though the server itself defaults to serving the server-one content. This hostname mismatch triggers certificate validation errors because the certificate doesn't include all the names used to access the server.
+The self-signed certificate was originally created with only the `server-one` domain name, causing SSL verification to fail when accessing the server via `localhost` and `127.0.0.1`, even though the server itself defaults to serving the `server-one` content. This hostname mismatch triggers certificate validation errors because the certificate doesn't include all the names used to access the server.
 
-To solve this problem, we can add Subject Alternative Names (SANs) to the certificate, allowing it to be valid for multiple domain names and/or IP addresses: [config](../ssl/selfsigned/certificate-2.cnf).
+To solve this problem, we can add Subject Alternative Names (SANs) to the certificate, allowing it to be valid for multiple domain names and/or IP addresses: [certificate-2.cnf](../ssl/selfsigned/certificate-2.cnf).
 
-**Create the certificate:**
+**Create the certificate using `certificate-2.cnf`:**
 ```bash
 openssl req -x509 -new -nodes \
   -sha256 \
@@ -200,7 +200,7 @@ openssl x509 -in ssl/selfsigned/certificate-2.pem -noout -checkip 127.0.0.1
 
 **Testing the new certificate:**
 
-Update **both** server configs in [nginx config](../docker/nginx.conf) to use the new certificate and restart the container:
+Update **both** server configs in [nginx config](../docker/nginx.conf) to use the new certificate and **restart the container**:
 ```conf
 server {
     listen 80 ssl;
@@ -222,20 +222,20 @@ server {
 
 Then try the following commands:
 ```bash
-# Request "server-one" through hostname
+# Request "server-one" through server-one hostname
 curl --resolve server-one:10000:127.0.0.1 --noproxy '*' https://server-one:10000/ --cacert ssl/selfsigned/certificate-2.pem
 
-# Request host "server-two" through hostname
+# Request host "server-two" through server-two hostname
 curl --resolve server-two:10000:127.0.0.1 --noproxy '*' https://server-two:10000/ --cacert ssl/selfsigned/certificate-2.pem
 
-# Request host "server-one" but through hostname "localhost"
+# Request host "server-one" through "localhost"
 curl -H 'Host: server-one' --noproxy '*' https://localhost:10000/ --cacert ssl/selfsigned/certificate-2.pem
 
-# Request host "server-one" but through IP address "127.0.0.1"
+# Request host "server-one" through IP address "127.0.0.1"
 curl -H 'Host: server-one' --noproxy '*' https://127.0.1:10000/ --cacert ssl/selfsigned/certificate-2.pem
 ```
 
-While using Subject Alternative Names works for a limited number of hosts, it requires updating and redistributing the certificate whenever a new server is added. A more scalable approach is to establish a private Certificate Authority (CA), which allows you to issue individual certificates for each server while clients need only trust the single CA certificate. This CA-based infrastructure provides more flexibility and better security management for growing environments.
+While using Subject Alternative Names works for a limited number of hosts, it requires updating and redistributing the cacert whenever a new server is added. A more scalable approach is to establish a private Certificate Authority (CA), which allows you to issue individual certificates for each server while clients need only trust the single CA certificate. This CA-based infrastructure provides more flexibility and better security management for growing environments.
 
 
 ## Next section

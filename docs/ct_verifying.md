@@ -6,7 +6,7 @@ Using the certificates downloaded during the "Chain of Trust" exercise, we'll ve
 
 **Install packages:**
 
-Go to the `ct-verify` directory and install the required dependencies with:
+Go to the [ct-verify](../ct-verify/) directory on the CLI and install the required dependencies with:
 ```bash
 npm install
 ```
@@ -75,7 +75,7 @@ The Log ID in the certificate is shown as a colon-separated hex string, but Goog
 
 **Step 3: Search for this base64-encoded Log ID**
 
-Now search for this base64-encoded value in Google's official CT log list [https://www.gstatic.com/ct/log_list/v3/all_logs_list.json](https://www.gstatic.com/ct/log_list/v3/all_logs_list.json)
+Now search for this base64-encoded value in Google's official CT log list.
 
 ## Next section
 

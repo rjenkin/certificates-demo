@@ -69,7 +69,7 @@ The annotated output should look like:
 
 ## Exercise: script to extract SCT data to JSON
 
-Update the `sct-encoding/src/sct_decode.py` script to output the `cert1_scts.bin` as JSON. Unit tests have been setup to ensure the code is output to the expected format.
+Update the [sct-encoding/src/sct_decode.py](../sct-encoding/src/sct_decode.py) script to output the `cert1_scts.bin` as JSON. Unit tests have been setup to ensure the code is output to the expected format.
 
 Install the python dependencies:
 ```bash
@@ -90,7 +90,7 @@ pipenv run decode --sct data/cert1_scts.bin > data/cert1_scts.json
 
 ## Exercise: script to encode SCT data into a certificate
 
-Update the `sct-encoding/src/sct_encode.py` script to convert the JSON back to binary. By comparing the output with the original `cert1_scts.bin` we can verify that the script is working correctly, and use this for embedding our own SCTs into our certificates.
+Update the [sct-encoding/src/sct_encode.py](../sct-encoding/src/sct_encode.py) script to convert the JSON back to binary. By comparing the output with the original `cert1_scts.bin` we can verify that the script is working correctly, and use this for embedding our own SCTs into our certificates.
 
 Run the script:
 ```bash

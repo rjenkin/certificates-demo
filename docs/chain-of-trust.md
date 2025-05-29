@@ -10,7 +10,7 @@ This section guides you through retrieving certificates from live websites, anal
 
 ## Download certificates
 
-This command establishes a secure TLS connection to the domain on port 443 using OpenSSL's s_client tool with the -showcerts flag, which displays the complete certificate chain presented by the server. The connection is fed an empty input from /dev/null to prevent the command from hanging; and then exports each certificate to it's own file by identifying where the certificates begin and end:
+This command establishes a secure TLS connection to the domain on port 443 using OpenSSL's `s_client` tool with the `-showcerts` flag, which displays the complete certificate chain presented by the server. The connection is fed an empty input from `/dev/null` to prevent the command from hanging; and then exports each certificate to it's own file by identifying where the certificates begin and end:
 ```bash
 openssl s_client -showcerts -connect domain:443 </dev/null | awk '/BEGIN CERTIFICATE/,/END CERTIFICATE/{ if(/BEGIN CERTIFICATE/){a++}; out="ssl/chain-of-trust/cert"a".pem"; print >out}'
 ```
@@ -22,7 +22,7 @@ openssl x509 -in ssl/chain-of-trust/cert2.pem -noout -subject -issuer
 openssl x509 -in ssl/chain-of-trust/cert3.pem -noout -subject -issuer
 ```
 
-**Compare certificate purpose:**
+**Compare certificate purposes:**
 ```bash
 openssl x509 -in ssl/chain-of-trust/cert1.pem -noout -purpose > ssl/chain-of-trust/cert1.purpose.txt
 openssl x509 -in ssl/chain-of-trust/cert2.pem -noout -purpose > ssl/chain-of-trust/cert2.purpose.txt
@@ -59,47 +59,38 @@ openssl verify -CAfile ssl/chain-of-trust/certs-bundle.pem ssl/chain-of-trust/ce
 
 ## Recreate certificates
 
-This exercise involves trying to recreate all three certificate with identical details. To verify whether your certificate matches, we will commit the original certificate to git, and output our certificate to the same file so that we can see what is similar or what is different. Start with the root CA as that's needed to create the intermediate certificate, and finally the server's certificate.
+This exercise involves trying to recreate all three certificate with identical details. To verify whether your certificate matches, we will use a diff tool to identify what is similar or different. Start with the root CA as that's needed to create the intermediate certificate, and finally the server's certificate.
 
 > Note: you won't be able to match the public key or the signature value using your own private keys.
 
-Commit original certificates:
+Config files:
+ - [CA config](../ssl/chain-of-trust/ca.cnf)
+ - [Intermediate config](../ssl/chain-of-trust/intermediate.cnf)
+ - [Server config](../ssl/chain-of-trust/server.cnf)
+
+Create script:
 ```bash
-openssl x509 -in ssl/chain-of-trust/cert1.pem -noout -text > ssl/chain-of-trust/cert1.pem.txt
-openssl x509 -in ssl/chain-of-trust/cert2.pem -noout -text > ssl/chain-of-trust/cert2.pem.txt
-openssl x509 -in ssl/chain-of-trust/cert3.pem -noout -text > ssl/chain-of-trust/cert3.pem.txt
+./scripts/create.sh
+```
+
+Compare the certificates:
+```bash
+# Compare the root CA
+diff --color=always --side-by-side ssl/chain-of-trust/cert3.pem.txt ssl/chain-of-trust/ca.pem.txt
+git diff --no-index --word-diff ssl/chain-of-trust/cert3.pem.txt ssl/chain-of-trust/ca.pem.txt
+
+# Compare the intermediate certificate
+diff --color=always --side-by-side ssl/chain-of-trust/cert2.pem.txt ssl/chain-of-trust/intermediate.pem.txt
+git diff --no-index --word-diff ssl/chain-of-trust/cert2.pem.txt ssl/chain-of-trust/intermediate.pem.txt
+
+# Compare the server certificate
+diff --color=always --side-by-side ssl/chain-of-trust/cert1.pem.txt ssl/chain-of-trust/server.pem.txt
+git diff --no-index --word-diff ssl/chain-of-trust/cert1.pem.txt ssl/chain-of-trust/server.pem.txt
 ```
 
 ### Certificate script
 
-Create a script that reconstructs the three-tier certificate hierarchy we examined. Your goal is to match the original certificates as closely as possible, focusing on matching the subject names, extensions, validity periods, and other metadata.
-
-Start by creating the root CA certificate, then use it to sign an intermediate CA certificate, and finally use the intermediate to sign a server certificate. After generating each certificate, output its details as text for comparison:
-
-> Note: the values for the signature and keys (public key, subject key identifier, and authority key identifier) will be different
-
-```bash
-# For the root CA:
-openssl x509 -in ssl/chain-of-trust/ca.pem -noout -text > ssl/chain-of-trust/ca.pem.txt
-
-# For the intermediate CA:
-openssl x509 -in ssl/chain-of-trust/intermediate.pem -noout -text > ssl/chain-of-trust/intermediate.pem.txt
-
-# For the server certificate:
-openssl x509 -in ssl/chain-of-trust/server.pem -noout -text > ssl/chain-of-trust/server.pem.txt
-```
-
-Compare your certificates with the originals to identify differences:
-```bash
-# For the root CA
-git diff --no-index --word-diff ssl/chain-of-trust/cert3.pem.txt ssl/chain-of-trust/ca.pem.txt
-
-# For the intermediate CA
-git diff --no-index --word-diff ssl/chain-of-trust/cert2.pem.txt ssl/chain-of-trust/intermediate.pem.txt
-
-# For the server certificate
-git diff --no-index --word-diff ssl/chain-of-trust/cert1.pem.txt ssl/chain-of-trust/server.pem.txt
-```
+Update the config files and `create.sh` script to reconstructs the three-tier certificate hierarchy we examined. Your goal is to match the original certificates as closely as possible, focusing on matching the subject names, extensions, validity periods, and other metadata. You might not be able to match the signature and keys (public key, subject key identifier, and authority key identifier) as we're using different keys. While most details can be updated through the config files, you might need to pass different parameters into the commands within the create script.
 
 When you've completed your certificate chain, verify its validity:
 

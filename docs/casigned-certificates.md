@@ -123,20 +123,26 @@ openssl x509 -req \
 -out ssl/casigned/server-two.pem
 ```
 
-Compare the certificates:
+Compare the two server certificates:
 ```bash
 openssl x509 -in ssl/casigned/server-one.pem -text -noout > ssl/casigned/server-one.pem.txt
 openssl x509 -in ssl/casigned/server-two.pem -text -noout > ssl/casigned/server-two.pem.txt
 
 diff --color=always --side-by-side ssl/casigned/server-one.pem.txt ssl/casigned/server-two.pem.txt
-git diff --no-index --word-diff ssl/casigned/server-one.csr.txt ssl/casigned/server-two.csr.txt
+git diff --no-index --word-diff ssl/casigned/server-one.pem.txt ssl/casigned/server-two.pem.txt
 ```
 
-Compare server one certificate with the certificate authority:
+Compare `server-one` certificate with the certificate authority:
 ```bash
 diff --color=always --side-by-side ssl/casigned/ca.pem.txt ssl/casigned/server-one.pem.txt
 
 git diff --no-index --word-diff ssl/casigned/ca.pem.txt ssl/casigned/server-one.pem.txt
+```
+
+Compare the signing request against the certificate:
+```bash
+diff --color=always --side-by-side ssl/casigned/server-one.csr.txt ssl/casigned/server-one.pem.txt
+git diff --no-index --word-diff ssl/casigned/server-one.csr.txt ssl/casigned/server-one.pem.txt
 ```
 
 ### Verify that a certificate was issued by an authority
@@ -151,6 +157,7 @@ Our self-signed certificate was not signed by the certificate authority so ***ve
 ```bash
 openssl verify -CAfile ssl/casigned/ca.pem ssl/selfsigned/certificate-1.pem
 ```
+
 
 ## Testing
 
@@ -198,7 +205,7 @@ When working in corporate environments with secure internet connections, network
 openssl s_client -connect 127.0.0.1:10000 -servername server-one </dev/null | openssl x509 -noout -issuer
 ```
 
-OpenSSL will return an error saying that it doesn't trust the server, and will then return the issuer value:
+OpenSSL will return an error saying that it doesn't trust the server, however it will then return the issuer value:
 
 ```text
 Connecting to 127.0.0.1
