@@ -1,5 +1,7 @@
 # Certificate Chain of Trust
 
+Return [home](../README.md)
+
 The Certificate Chain of Trust in modern PKI systems employs a tiered architecture where trust flows downward from a highly-secured offline root Certificate Authority (CA), through one or more intermediate CAs, and finally to the end-entity certificates that secure websites and services. This hierarchical design strategically isolates the root CA's critical private key from online threats while still extending its authority through a verifiable chain of digital signatures, enabling browsers and clients to validate server certificates by tracing their lineage back to a trusted root.
 
 When examining certificates from production websites, this chain structure becomes evident as each certificate references its issuer, creating an unbroken path of trust from the server certificate through intermediaries to a root CA that's pre-installed in client trust stores.
@@ -78,13 +80,13 @@ Start by creating the root CA certificate, then use it to sign an intermediate C
 
 ```bash
 # For the root CA:
-openssl x509 -in your_root_ca.pem -noout -text > ssl/chain-of-trust/ca.pem.txt
+openssl x509 -in ssl/chain-of-trust/ca.pem -noout -text > ssl/chain-of-trust/ca.pem.txt
 
 # For the intermediate CA:
-openssl x509 -in your_intermediate.pem -noout -text > ssl/chain-of-trust/intermediate.pem.txt
+openssl x509 -in ssl/chain-of-trust/intermediate.pem -noout -text > ssl/chain-of-trust/intermediate.pem.txt
 
 # For the server certificate:
-openssl x509 -in your_server_cert.pem -noout -text > ssl/chain-of-trust/server.pem.txt
+openssl x509 -in ssl/chain-of-trust/server.pem -noout -text > ssl/chain-of-trust/server.pem.txt
 ```
 
 Compare your certificates with the originals to identify differences:
@@ -106,6 +108,6 @@ When you've completed your certificate chain, verify its validity:
 openssl verify -CAfile ssl/chain-of-trust/ca.pem ssl/chain-of-trust/intermediate.pem
 
 # Create a bundle and verify server certificate
-cat chain-of-trust/ca.pem ssl/chain-of-trust/intermediate.pem > ssl/chain-of-trust/bundle.pem
+cat ssl/chain-of-trust/ca.pem ssl/chain-of-trust/intermediate.pem > ssl/chain-of-trust/bundle.pem
 openssl verify -CAfile ssl/chain-of-trust/bundle.pem ssl/chain-of-trust/server.pem
 ```

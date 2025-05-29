@@ -1,0 +1,187 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.15 Chrome/134.0.6998.205 Electron/35.2.1 Safari/537.36" version="26.2.15">
+  <diagram name="Page-1" id="GPCsjNSLJhdtyKksL7qd">
+    <mxGraphModel dx="1797" dy="1819" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-3" value="1. Create Pre-Certificate signing request" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="-260" y="-120" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-5" value="Pre-Certificate Signing Request" style="whiteSpace=wrap;html=1;shape=mxgraph.basic.document;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="-80" y="-120" width="85" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-6" value="Pre-Certificate request template" style="whiteSpace=wrap;html=1;shape=mxgraph.basic.document;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=0" vertex="1" parent="1">
+          <mxGeometry x="-241.25" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-7" value="2. Create Pre-Certificate" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="-97.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-10" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-6" target="1e5mrHVx4v3nXohVyHIT-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-20" y="20" as="sourcePoint" />
+            <mxPoint x="30" y="-30" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-11" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;fillColor=#ffe6cc;strokeColor=#d79b00;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-3" target="1e5mrHVx4v3nXohVyHIT-5">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-60" y="-90" as="sourcePoint" />
+            <mxPoint x="30" y="-30" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-12" value="Pre-Certificate" style="whiteSpace=wrap;html=1;shape=mxgraph.basic.document;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="80" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-13" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-5" target="1e5mrHVx4v3nXohVyHIT-7">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-20" y="20" as="sourcePoint" />
+            <mxPoint x="30" y="-30" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-15" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;elbow=vertical;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-6" target="1e5mrHVx4v3nXohVyHIT-7">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-100" y="-70" as="sourcePoint" />
+            <mxPoint x="30" y="-30" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-16" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;fillColor=#ffe6cc;strokeColor=#d79b00;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-7" target="1e5mrHVx4v3nXohVyHIT-12">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-30" y="60" as="sourcePoint" />
+            <mxPoint x="20" y="10" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-17" value="Signed Certificate Timestamps" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=5" vertex="1" parent="1">
+          <mxGeometry x="-260" y="-190" width="240" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-30" value="Issuer key" style="whiteSpace=wrap;html=1;shape=mxgraph.basic.document;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="-200" y="120" width="85" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-31" value="CA certificate" style="whiteSpace=wrap;html=1;shape=mxgraph.basic.document;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="-80" y="120" width="85" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-32" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;elbow=vertical;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-30" target="1e5mrHVx4v3nXohVyHIT-7">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-151" y="40" as="sourcePoint" />
+            <mxPoint x="-87" y="40" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-33" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;elbow=vertical;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-31" target="1e5mrHVx4v3nXohVyHIT-7">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-141" y="50" as="sourcePoint" />
+            <mxPoint x="-77" y="50" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-34" value="3. Log Server:&lt;br&gt;Add Pre Chain" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="120" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-35" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;elbow=vertical;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-12" target="1e5mrHVx4v3nXohVyHIT-34">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="10" y="130" as="sourcePoint" />
+            <mxPoint x="-15" y="70" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-36" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;elbow=vertical;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-31" target="1e5mrHVx4v3nXohVyHIT-34">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="20" y="80" as="sourcePoint" />
+            <mxPoint x="-5" y="20" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-37" value="SCT" style="whiteSpace=wrap;html=1;shape=mxgraph.basic.document;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="240" y="120" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-38" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;elbow=vertical;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-34" target="1e5mrHVx4v3nXohVyHIT-37">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="10" y="180" as="sourcePoint" />
+            <mxPoint x="90" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-40" value="4. Create Certificate signing request" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="240" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-41" value="Certificate Signing Request" style="whiteSpace=wrap;html=1;shape=mxgraph.basic.document;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="77.5" y="360" width="85" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-42" value="Certificate request template" style="whiteSpace=wrap;html=1;shape=mxgraph.basic.document;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="240" y="240" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-43" value="5. Create Certificate" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="480" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-44" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-42" target="1e5mrHVx4v3nXohVyHIT-40">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="580" y="180" as="sourcePoint" />
+            <mxPoint x="630" y="130" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-45" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;fillColor=#ffe6cc;strokeColor=#d79b00;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-40" target="1e5mrHVx4v3nXohVyHIT-41">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="540" y="70" as="sourcePoint" />
+            <mxPoint x="630" y="130" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-46" value="Certificate" style="whiteSpace=wrap;html=1;shape=mxgraph.basic.document;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="240" y="480" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-47" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-41" target="1e5mrHVx4v3nXohVyHIT-43">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="580" y="180" as="sourcePoint" />
+            <mxPoint x="630" y="130" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-48" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;elbow=vertical;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-42" target="1e5mrHVx4v3nXohVyHIT-43">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="500" y="90" as="sourcePoint" />
+            <mxPoint x="630" y="130" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-49" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;fillColor=#ffe6cc;strokeColor=#d79b00;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-43" target="1e5mrHVx4v3nXohVyHIT-46">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="570" y="220" as="sourcePoint" />
+            <mxPoint x="620" y="170" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-52" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;elbow=vertical;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-30" target="1e5mrHVx4v3nXohVyHIT-43">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="609" y="-20" as="sourcePoint" />
+            <mxPoint x="673" y="-20" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="-160" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-53" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;elbow=vertical;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-31" target="1e5mrHVx4v3nXohVyHIT-43">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="619" y="-10" as="sourcePoint" />
+            <mxPoint x="683" y="-10" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="-40" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-54" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;elbow=vertical;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-37" target="1e5mrHVx4v3nXohVyHIT-42">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="449" y="180" as="sourcePoint" />
+            <mxPoint x="400" y="170" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-56" value="Certificate key" style="whiteSpace=wrap;html=1;shape=mxgraph.basic.document;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="-400" y="-120" width="85" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-57" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;elbow=vertical;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-56" target="1e5mrHVx4v3nXohVyHIT-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-350" y="-40" as="sourcePoint" />
+            <mxPoint x="-87" y="40" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="1e5mrHVx4v3nXohVyHIT-60" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;elbow=vertical;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;" edge="1" parent="1" source="1e5mrHVx4v3nXohVyHIT-56" target="1e5mrHVx4v3nXohVyHIT-40">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-305" y="-80" as="sourcePoint" />
+            <mxPoint x="-250" y="-80" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="-360" y="270" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

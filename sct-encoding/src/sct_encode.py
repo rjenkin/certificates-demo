@@ -88,7 +88,7 @@ def encode_binary_sct(filename_json, filename_binary):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process SCT JSON to binary.')
     parser.add_argument('--scts', help='Path to the JSON file containing SCTs', required=True)
-    parser.add_argument('--binary-output', help='Filename to save the binary SCT output', default='sct_output.bin')
+    parser.add_argument('--binary-output', help='Filename to save the binary SCT output', default='data/sct_output.bin')
     args = parser.parse_args()
 
     if not os.path.isfile(args.scts):

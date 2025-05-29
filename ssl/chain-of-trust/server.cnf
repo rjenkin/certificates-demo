@@ -7,3 +7,5 @@ req_extensions = req_ext
 CN = server.local
 
 [req_ext]
+
+[req_ext2]

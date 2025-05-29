@@ -26,12 +26,13 @@ Perfect for developers, security professionals, and system administrators lookin
 **Basic Requirements (Exercises 1-5):**
 - Docker for container-based services
 - OpenSSL for certificate operations
-- JQ for JSON processing
+- JQ for JSON processing: `brew install jq`
 
 **Additional Requirements (Exercise 6):**
-- Go programming language
+- Go programming language: `brew install go`
 - NodeJS runtime
-- Python 3 (with Pipenv)
+- Python 3
+  - Pipenv: `pip install --user pipenv`
 
 If you're behind a corporate proxy or need to use internal package repositories, configure your development environment with these environment variables:
 ```bash

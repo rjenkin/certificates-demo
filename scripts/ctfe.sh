@@ -44,6 +44,7 @@ docker exec -i ctfe-db mariadb -pzaphod -Dtest < ${GIT_HOME}/certificate-transpa
 cd $GIT_HOME
 CTFE_CONF_DIR="$REPO_ROOT/docker/ctfe_config"
 mkdir -p ${CTFE_CONF_DIR}
+echo "CTFE configuration directory created at ${CTFE_CONF_DIR}"
 
 TREE_ID=$(go run github.com/google/trillian/cmd/createtree@master --admin_server=localhost:8090)
 if [ -z "$TREE_ID" ]; then

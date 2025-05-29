@@ -1,5 +1,7 @@
 # Other tools
 
+Return [home](../README.md)
+
 ## Google's Certificate Transparency Go tools
 
 The [Certificate Transparency: Go Code](https://github.com/google/certificate-transparency-go) holds Go code related to Certificate Transparency (CT).

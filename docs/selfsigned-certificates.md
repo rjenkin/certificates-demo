@@ -1,5 +1,7 @@
 # Self-signed certificates
 
+Return [home](../README.md)
+
 Self-signed certificates are digital certificates that are created, issued, and signed by the same entity whose identity they certify, rather than by a trusted Certificate Authority (CA). While they provide the same encryption capabilities as CA-issued certificates, they lack third-party validation, causing browsers and clients to display trust warnings. Self-signed certificates are primarily useful for development environments, internal services, and testing scenarios where external validation isn't required.
 
 ![Self-signed Certificate](selfsigned-certificates.drawio.png)
@@ -127,17 +129,17 @@ server {
 > Note: *This will return an untrusted certificate error*
 
 ```bash
-curl --resolve server-one:10000:127.0.0.1 https://server-one:10000/
+curl --resolve server-one:10000:127.0.0.1 --noproxy '*' https://server-one:10000/
 ```
 
 The SSL certificate warning can be bypassed using the `--insecure` flag, but this practice undermines security by accepting untrusted certificates and should be avoided:
 ```bash
-curl --resolve server-one:10000:127.0.0.1 https://server-one:10000/ --insecure
+curl --resolve server-one:10000:127.0.0.1 --noproxy '*' https://server-one:10000/ --insecure
 ```
 
 Instead, provide the self-signed certificate as a trusted CA to the client:
 ```bash
-curl --cacert ssl/selfsigned/certificate-1.pem --resolve server-one:10000:127.0.0.1 https://server-one:10000/
+curl --resolve server-one:10000:127.0.0.1 --noproxy '*' https://server-one:10000/ --cacert ssl/selfsigned/certificate-1.pem
 ```
 
 **Request on different domain name:**
@@ -145,11 +147,14 @@ curl --cacert ssl/selfsigned/certificate-1.pem --resolve server-one:10000:127.0.
 The original certificate was created specifically for the `server-one` domain name. However, our server is accessible through multiple hostnames and IP addresses including `localhost`, `127.0.0.1`, and also used for `server-two`. Try these commands to see how certificate validation fails when the hostname doesn't match what's in the certificate:
 
 ```bash
-curl --cacert ssl/selfsigned/certificate-1.pem https://localhost:10000/
+# Request host "server-one" but through hostname "localhost"
+curl -H 'Host: server-one' --noproxy '*' https://localhost:10000/ --cacert ssl/selfsigned/certificate-1.pem
 
-curl --cacert ssl/selfsigned/certificate-1.pem https://127.0.0.1:10000/
+# Request host "server-one" but through IP address "127.0.0.1"
+curl -H 'Host: server-one' --noproxy '*' https://127.0.0.1:10000/ --cacert ssl/selfsigned/certificate-1.pem
 
-curl --cacert ssl/selfsigned/certificate-1.pem --resolve server-two:10000:127.0.0.1 https://server-two:10000/
+# Request host "server-two"
+curl --resolve server-two:10000:127.0.0.1 --noproxy '*' https://server-two:10000/ --cacert ssl/selfsigned/certificate-1.pem
 ```
 
 ### Subject Name Alternatives
@@ -180,12 +185,17 @@ git diff --no-index --word-diff ssl/selfsigned/certificate-1.pem.txt ssl/selfsig
 **Check the supported hosts:**
 
 ```bash
+# Check certificate 1
+openssl x509 -in ssl/selfsigned/certificate-1.pem -noout -checkhost server-one
+openssl x509 -in ssl/selfsigned/certificate-1.pem -noout -checkhost server-two
+openssl x509 -in ssl/selfsigned/certificate-1.pem -noout -checkhost localhost
+openssl x509 -in ssl/selfsigned/certificate-1.pem -noout -checkip 127.0.0.1
+
+# Check certificate 2
 openssl x509 -in ssl/selfsigned/certificate-2.pem -noout -checkhost server-one
 openssl x509 -in ssl/selfsigned/certificate-2.pem -noout -checkhost server-two
 openssl x509 -in ssl/selfsigned/certificate-2.pem -noout -checkhost localhost
 openssl x509 -in ssl/selfsigned/certificate-2.pem -noout -checkip 127.0.0.1
-
-openssl x509 -in ssl/selfsigned/certificate-2.pem -noout -checkhost server-three
 ```
 
 **Testing the new certificate:**
@@ -212,11 +222,17 @@ server {
 
 Then try the following commands:
 ```bash
-curl --cacert ssl/selfsigned/certificate-2.pem --resolve server-one:10000:127.0.0.1 https://server-one:10000
-curl --cacert ssl/selfsigned/certificate-2.pem --resolve server-two:10000:127.0.0.1 https://server-two:10000
+# Request "server-one" through hostname
+curl --resolve server-one:10000:127.0.0.1 --noproxy '*' https://server-one:10000/ --cacert ssl/selfsigned/certificate-2.pem
 
-curl --cacert ssl/selfsigned/certificate-2.pem -H 'Host: server-one' https://localhost:10000/
-curl --cacert ssl/selfsigned/certificate-2.pem -H 'Host: server-two' https://localhost:10000/
+# Request host "server-two" through hostname
+curl --resolve server-two:10000:127.0.0.1 --noproxy '*' https://server-two:10000/ --cacert ssl/selfsigned/certificate-2.pem
+
+# Request host "server-one" but through hostname "localhost"
+curl -H 'Host: server-one' --noproxy '*' https://localhost:10000/ --cacert ssl/selfsigned/certificate-2.pem
+
+# Request host "server-one" but through IP address "127.0.0.1"
+curl -H 'Host: server-one' --noproxy '*' https://127.0.1:10000/ --cacert ssl/selfsigned/certificate-2.pem
 ```
 
 While using Subject Alternative Names works for a limited number of hosts, it requires updating and redistributing the certificate whenever a new server is added. A more scalable approach is to establish a private Certificate Authority (CA), which allows you to issue individual certificates for each server while clients need only trust the single CA certificate. This CA-based infrastructure provides more flexibility and better security management for growing environments.

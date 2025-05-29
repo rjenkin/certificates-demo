@@ -1,5 +1,7 @@
 # Prerequisite information
 
+Return [home](../README.md)
+
 This section serves as a foundational reference guide, introducing essential command-line tools and data formats commonly used when working with digital certificates. It provides practical examples for manipulating and inspecting certificate-related data, including Base64 encoding/decoding, binary data examination with xxd, JSON processing with jq, and making HTTP requests with curl. Additionally, it covers the critical certificate formats (PEM, DER) and explains Abstract Syntax Notation One (ASN.1) encoding—the underlying structure of digital certificates. These commands and format explanations form the technical toolbox you'll need throughout the certificate exercises, allowing you to decode, inspect, and modify certificate data with confidence.
 
 ## Commands
@@ -67,14 +69,14 @@ API servers commonly return data in JSON format. The jq utility is a powerful co
 
 **Access "name" value:**
 ```bash
-echo '{"name":"value"}' | jq '.name'
+echo '{"name":"the value"}' | jq '.name'
 ```
 
 > Note: the returned name is quoted, i.e `"value"`.
 
 **Access the raw value value:**
 ```bash
-echo '{"name":"value"}' | jq --raw-output '.name'
+echo '{"name":"the value"}' | jq --raw-output '.name'
 ```
 
 > Note: The --raw-output (or -r) option removes the surrounding quotes from string values, which is essential when the output needs to be used as input for other commands or parsed further.
@@ -97,6 +99,8 @@ echo '{"nested":{"nested1":1,"nested2":2}}' | jq '.nested.nested2'
 ### Curl
 
 `curl` is a command-line tool for making HTTP requests.
+
+Note: If you're behind a corporate firewall, you might need to configure a proxy to make external requests.
 
 **GET requests:**
 ```bash
@@ -163,6 +167,8 @@ Privacy Enhanced Mail (PEM) is the most common format used to store and distribu
 
 
 **View the details of a PEM certificate:**
+
+> Note: you might need to initialise github submodules first: `git submodule update --init --recursive`
 
 ```bash
 openssl x509 -in submodules/certificate-transparency-go/trillian/testdata/leaf-1.cert -text -noout | head --lines 4
