@@ -77,7 +77,7 @@ The Log ID in the certificate is shown as a colon-separated hex string, but Goog
 
 **Step 3: Search for this base64-encoded Log ID**
 
-Now search for this base64-encoded value in Google's official CT log list.
+Now search for this base64-encoded value in Google's official CT log listed above.
 
 ## Next section
 
