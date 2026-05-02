@@ -30,8 +30,8 @@ awk '
 in_cert { cert_content = cert_content $0 "\n" }
 /-----END CERTIFICATE-----/ {
   print "=== Certificate " cert_num " ==="
-  print cert_content | "openssl x509 -noout -subject -usser -dates -serial"
-  close("openssl x509 -noout -subject -issuer -dates -serial")
+  print cert_content | "openssl x509 -noout -subject -usser -dates -serial -fingerprint -sha256"
+  close("openssl x509 -noout -subject -issuer -dates -serial -fingerprint -sha256")
   print ""
   in_cert=0
 }' "$CERTIFICATE_BUNDLE"
